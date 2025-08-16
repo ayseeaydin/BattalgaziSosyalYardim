@@ -9,6 +9,8 @@ namespace BattalgaziSosyalYardim.Database
     {
         public static async Task RunAsync(AppDbContext db)
         {
+            Console.WriteLine(">>> SeedData başladı");
+
             // veritabanını gerekirse migrate et
             await db.Database.MigrateAsync();
 
@@ -36,6 +38,8 @@ namespace BattalgaziSosyalYardim.Database
                 );
 
                 await db.SaveChangesAsync();
+
+                Console.WriteLine(">>> AidPrograms eklendi.");
             }
         }
     }
