@@ -54,11 +54,11 @@ namespace BattalgaziSosyalYardim.Database
                 .ToTable(tb =>
                 {
                     tb.HasCheckConstraint("ck_mother_national_id",
-                        "MotherNationalId ~ '^[1-9][0-9]{10}$'");
+                        "\"MotherNationalId\" ~ '^[1-9][0-9]{10}$'");
                     tb.HasCheckConstraint("ck_baby_national_id",
-                        "BabyNationalId ~ '^[1-9][0-9]{10}$'");
+                        "\"BabyNationalId\" ~ '^[1-9][0-9]{10}$'");
                     tb.HasCheckConstraint("ck_phone_number",
-                        "PhoneNumber ~ '^(?:\\+?90)?0?5[0-9]{9}$'");
+                        "\"PhoneNumber\" ~ '^(?:\\+?90)?0?5[0-9]{9}$'");
                 });
         }
     }
