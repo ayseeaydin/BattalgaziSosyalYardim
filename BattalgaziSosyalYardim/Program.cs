@@ -6,12 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add services to the container.
+// MVC
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline.  Hata yakalama / güvenlik
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -19,17 +19,23 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Orta katmanlar
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles();   // wwwroot için gerekli
 app.UseRouting();
 app.UseAuthorization();
 
-app.MapStaticAssets();
-
+// Rota
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// Uygulama açýlýþýnda migrate + seed
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await SeedData.RunAsync(db);
+}
 
-app.Run();
+    app.Run();
