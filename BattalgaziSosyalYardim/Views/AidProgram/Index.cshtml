@@ -1,0 +1,32 @@
+﻿@model IEnumerable<BattalgaziSosyalYardim.Entities.AidProgram>
+@{
+    ViewData["Title"] = "Aid Programs";
+}
+
+<h1 class="mb-3">Aid Programs</h1>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Active?</th>
+            <th>Start</th>
+            <th>End</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Code</td>
+                <td>@p.Name</td>
+                <td>@p.Description</td>
+                <td>@(p.IsActive ? "Yes" : "No")</td>
+                <td>@p.StartDate?.ToString("yyyy-MM-dd")</td>
+                <td>@p.EndDate?.ToString("yyyy-MM-dd")</td>
+            </tr>
+        }
+    </tbody>
+</table>

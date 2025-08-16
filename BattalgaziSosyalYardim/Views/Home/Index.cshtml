@@ -1,8 +1,110 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Index";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@section Styles {
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        body {
+            background: rgb(54, 179, 234);
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .page-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .kapsayici-kutu {
+            background-color: white;
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .yardim-title {
+            font-size: 30px;
+            color: #211717;
+            text-shadow: 1px 1px 5px #000;
+            margin-bottom: 40px;
+        }
+
+        .yardim-cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .yardim-card {
+            background-color: rgb(54, 179, 234);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+        }
+
+            .yardim-card:hover {
+                transform: translateY(-4px);
+                background-color: #007bff;
+                color: #fff;
+            }
+
+            .yardim-card .material-icons {
+                font-size: 42px;
+                margin-bottom: 8px;
+                color: white;
+                transition: color 0.3s ease;
+            }
+
+            .yardim-card:hover .material-icons {
+                color: black;
+            }
+
+        /* Pasif kart */
+        .disabled-card {
+            pointer-events: none;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+}
+
+<div class="page-wrapper">
+    <div class="kapsayici-kutu">
+        <!-- LOGO (wwwroot/img/battalgazi-logo.png) -->
+        <img src="~/img/battalgazi-logo.png" alt="Logo"
+             style="width: 250px; display: block; margin: 0 auto 20px auto;" />
+
+        <hr style="border: 0; border-top: 2px solid rgb(54, 179, 234); margin: 0 0 30px 0;" />
+
+        <div class="yardim-title">Yardım Türünü Seçin</div>
+
+        <div class="yardim-cards-container">
+            <a href="/Talep" class="yardim-card">
+                <span class="material-icons">baby_changing_station</span>
+                <div><strong>Bez Desteği</strong></div>
+            </a>
+
+            <a class="yardim-card disabled-card" title="Yakında">
+                <span class="material-icons">edit</span>
+                <div><strong>Kırtasiye Yardımı (Yakında)</strong></div>
+            </a>
+        </div>
+    </div>
 </div>
