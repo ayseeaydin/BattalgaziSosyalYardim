@@ -1,195 +1,136 @@
 ﻿@{
-    ViewData["Title"] = "0-2 Yaş Bebek Bezi Desteği Başvuru Formu";
-    var programTitle = (ViewData["ProgramTitle"] as string) ?? "Bebek Bezi Desteği";
+    Layout = "~/Views/Shared/_Bootstrap5Layout.cshtml";   // ÖNEMLİ: yalın Bootstrap 5 layout’u
+    ViewData["Title"] = "Başvuru Formu";
 }
 
-<style>
-    body {
-        /* Arka plan fotoğrafı */
-        background: url('/img/bg-battalgazi.jpg') no-repeat center center fixed;
-        background-size: cover;
-    }
-
-    /* Ortadaki kart */
-    .form-shell {
-        max-width: 980px;
-        margin: 48px auto;
-        background: rgba(255,255,255,0.92);
-        border-radius: 18px;
-        box-shadow: 0 18px 40px rgba(0,0,0,.25);
-        padding: 24px 28px 20px;
-        position: relative;
-    }
-
-    .form-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 12px;
-    }
-
-        .form-header img {
-            height: 58px;
+@section Styles {
+    <style>
+        body {
+            background: url('/thema/img/belediye.jpg') no-repeat center center fixed;
+            background-size: cover;
         }
 
-    .form-title {
-        text-align: center;
-        font-weight: 800;
-        font-size: 24px;
-        margin: 10px 0 18px;
-    }
-
-    .label-col {
-        width: 220px;
-        color: #333;
-        font-weight: 600;
-        padding-right: 16px;
-        white-space: nowrap;
-    }
-
-    .row-item {
-        display: flex;
-        align-items: center;
-        margin: 14px 0;
-    }
-
-        .row-item input[type="text"],
-        .row-item input[type="tel"],
-        .row-item input[type="date"] {
-            flex: 1 1 auto;
-            height: 42px;
-            border-radius: 10px;
-            border: 1px solid #e1e1e1;
-            padding: 0 14px;
-            outline: none;
-            background: #fff;
+        .background-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            filter: brightness(0.7);
+            z-index: -1;
         }
 
-    .submit-wrap {
-        text-align: center;
-        margin: 22px 0 6px;
-    }
+        .custom-card {
+            background-color: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
 
-    .btn-submit {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        border: 0;
-        border-radius: 10px;
-        padding: 12px 18px;
-        background: #2CB170;
-        color: #fff;
-        font-weight: 700;
-        box-shadow: 0 10px 18px rgba(0,0,0,.18);
-        cursor: pointer;
-    }
+        .form-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+        }
 
-    .footer-line {
-        text-align: center;
-        color: #444;
-        font-weight: 600;
-        margin-top: 8px;
-        padding: 10px 0;
-        background: rgba(255,255,255,0.85);
-        border-radius: 0 0 14px 14px;
-    }
+            .form-header img {
+                height: 60px;
+            }
 
-    /* Bootstrap modal override ufak dokunuşlar */
-    .modal-content {
-        border-radius: 14px;
-    }
+            .form-header h2 {
+                flex-grow: 1;
+                text-align: center;
+                margin: 0;
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: #333;
+            }
 
-    .modal-header {
-        border-bottom: 0;
-    }
+        .admin-login {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            background-color: azure;
+            color: black;
+        }
+    </style>
+}
 
-    .modal-title {
-        font-weight: 800;
-    }
+<a href="/Login/Login" class="btn btn-outline-light admin-login" title="Yönetici Girişi">👤 Yönetici Girişi</a>
+<div class="background-overlay"></div>
 
-    .modal-body ul {
-        margin: 0 0 0 18px;
-    }
+<div class="container mt-5 mb-5">
+    <div class="card custom-card">
+        <div class="form-header">
+            <img src="/thema/img/logo.png" alt="Logo" />
+            <h2>0-2 YAŞ BEBEK BEZİ DESTEĞİ BAŞVURU FORMU</h2>
+            <img src="/thema/img/aile.jpg" alt="Bebek" style="width:90px;" />
+        </div>
 
-    .modal-body li {
-        margin: 6px 0;
-    }
+        <div class="card-body p-4">
+            <form id="basvuruForm" method="post">
+                <div class="mb-3 row">
+                    <label class="col-md-4 col-form-label fw-semibold" for="AnneTC">Anne T.C. Kimlik No</label>
+                    <div class="col-md-8"><input class="form-control" type="text" id="AnneTC" name="AnneTC" placeholder="11 haneli TCKN" /></div>
+                </div>
 
-    .note-red {
-        color: #d41414;
-        font-weight: 800;
-    }
-</style>
+                <div class="mb-3 row">
+                    <label class="col-md-4 col-form-label fw-semibold" for="DogumTarihi">Anne Doğum Tarihi</label>
+                    <div class="col-md-8"><input type="date" class="form-control" id="DogumTarihi" name="DogumTarihi" /></div>
+                </div>
 
-<div class="form-shell">
-    <div class="form-header">
-        <img src="/img/battalgazi-logo.png" alt="Battalgazi Belediyesi" />
-        <img src="/img/bebek-yardim-logo.png" onerror="this.style.display='none';" alt="" />
+                <div class="mb-3 row">
+                    <label class="col-md-4 col-form-label fw-semibold" for="AnneAdSoyad">Anne Ad Soyad</label>
+                    <div class="col-md-8"><input class="form-control" type="text" id="AnneAdSoyad" name="AnneAdSoyad" placeholder="Ad Soyad" /></div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-md-4 col-form-label fw-semibold" for="Telefon">Telefon</label>
+                    <div class="col-md-8"><input class="form-control" type="tel" id="Telefon" name="Telefon" placeholder="05XXXXXXXXX" /></div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-md-4 col-form-label fw-semibold" for="BebekTC">Bebek T.C. Kimlik No</label>
+                    <div class="col-md-8"><input class="form-control" type="text" id="BebekTC" name="BebekTC" placeholder="11 haneli TCKN" /></div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" id="submitBtn" class="btn btn-success">📤 Başvuru Yap</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-footer text-center text-muted small">
+            <strong>Battalgazi Belediyesi Bilgi İşlem Müdürlüğü</strong>
+        </div>
     </div>
-
-    <div class="form-title">0-2 YAŞ BEBEK BEZİ DESTEĞİ BAŞVURU FORMU</div>
-
-    <form method="post" action="#">
-        <!-- NOT: Şimdilik yalnızca görünüm. Post action'ı ekleyince değiştiririz. -->
-        <div class="row-item">
-            <div class="label-col">Anne T.C. Kimlik No</div>
-            <input type="text" name="MotherNationalId" maxlength="11" placeholder="11 haneli TCKN" />
-        </div>
-
-        <div class="row-item">
-            <div class="label-col">Anne Doğum Tarihi</div>
-            <input type="date" name="MotherBirthDate" />
-        </div>
-
-        <div class="row-item">
-            <div class="label-col">Anne Ad Soyad</div>
-            <input type="text" name="MotherFullName" placeholder="Ad Soyad" />
-        </div>
-
-        <div class="row-item">
-            <div class="label-col">Telefon</div>
-            <input type="tel" name="PhoneNumber" placeholder="05XXXXXXXXX" />
-        </div>
-
-        <div class="row-item">
-            <div class="label-col">Bebek T.C. Kimlik No</div>
-            <input type="text" name="BabyNationalId" maxlength="11" placeholder="11 haneli TCKN" />
-        </div>
-
-        <div class="submit-wrap">
-            <button class="btn-submit" type="submit">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 12l18-9-9 18-2-7-7-2z" /></svg>
-                Başvuru Yap
-            </button>
-        </div>
-    </form>
-
-    <div class="footer-line">Battalgazi Belediyesi Bilgi İşlem Müdürlüğü</div>
 </div>
 
-<!-- Bilgilendirme Modal (Bootstrap 5) -->
-<div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+<!-- Açılışta görünen bilgilendirme modalı -->
+<div class="modal fade" id="basvuruModal" tabindex="-1" aria-labelledby="basvuruModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Battalgazi Belediyesi Bebek Bezi Desteği</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
-            <div class="modal-body">
-                <p><strong>Müdürlük:</strong> SOSYAL YARDIM İŞLERİ ŞUBE MÜDÜRLÜĞÜ</p>
-                <p><strong>Projenin amacı:</strong> 2025 “Aile yılı” kapsamında bebek bezi desteği</p>
-                <p><strong>Proje başlangıcı:</strong> 01.06.2025</p>
-                <p><strong>Proje bitimi:</strong> 31.12.2025</p>
-                <ul>
-                    <li>TÜRKİYE CUMHURİYETİ vatandaşı olmak</li>
-                    <li>Battalgazi ilçe sınırlarında ikamet ediyor olması</li>
-                    <li>Bez desteği alacak çocukların 0 ile 24 ay arasında olması</li>
-                    <li>Ailenin dar gelirli olması (dar gelirli: iki asgari ücretin altında olması gerekmektedir.)</li>
-                    <li>Sosyal uyum yardımı alamayan aileler başvurabilir</li>
-                    <li>Eksik ve sahte olduğu tespit edilen başvurular kabul edilmeyecektir</li>
-                    <li>Başvurular bebeğin annesi üzerinden online olarak yapılacaktır</li>
-                </ul>
-                <p class="note-red mt-3">NOT: BAŞVURULAR SADECE ONLINE SİSTEM ÜZERİNDEN KABUL EDİLMEKTEDİR.</p>
+            <div class="modal-body" style="white-space: pre-line;">
+                <strong>Müdürlük:</strong> SOSYAL YARDIM İŞLERİ ŞUBE MÜDÜRLÜĞÜ
+                <strong>Projenin amacı:</strong> 2025 “Aile yılı” kapsamında bebek bezi desteği
+                <strong>Proje başlangıcı:</strong> 01.06.2025
+                <strong>Proje bitimi:</strong> 31.12.2025
+                • TÜRKİYE CUMHURİYETİ vatandaşı olmak
+                • Battalgazi ilçe sınırlarında ikamet ediyor olması
+                • Bez desteği alacak çocukların 0 ile 24 ay arasında olması
+                • Ailenin dar gelirli olması (dar gelirli: iki asgari ücretin altında olması gerekmektedir.)
+                • Sosyal uyum yardımı alamayan aileler başvurabilir
+                • Eksik ve sahte olduğu tespit edilen başvurular kabul edilmeyecektir
+                • Başvurular bebeğin annesi üzerinden online olarak yapılacaktır
+
+                <p style="color:red; font-weight:bold; text-align:center; font-size:1.2rem;">
+                    NOT: BAŞVURULAR SADECE ONLINE SİSTEM ÜZERİNDEN KABUL EDİLMEKTEDİR.
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tamam</button>
@@ -199,21 +140,22 @@
 </div>
 
 @section Scripts {
-    <!-- Bootstrap 5 modali otomatik aç + bir kez göster -->
     <script>
-        (function () {
-            const KEY = "bbd_info_shown";
-            const modalEl = document.getElementById('infoModal');
+        document.addEventListener("DOMContentLoaded", function () {
+            // Modal: her açılışta göster
+            const modalEl = document.getElementById('basvuruModal');
+            const modal = new bootstrap.Modal(modalEl, { backdrop: 'static' });
+            modal.show();
 
-            if (modalEl) {
-                const modal = new bootstrap.Modal(modalEl, { backdrop: 'static' });
+            // (İsteğe bağlı) bugünkü tarihi otomatik yaz
+            const d = document.getElementById("DogumTarihi");
+            if (d && !d.value) d.value = new Date().toISOString().slice(0,10);
 
-                // sadece 1 kere gösterilsin
-                if (!localStorage.getItem(KEY)) {
-                    modal.show();
-                    localStorage.setItem(KEY, "1");
-                }
-            }
-        })();
+            // Form submit (şimdilik sadece görsel—gerçek POST’a sonra bağlarız)
+            document.getElementById("basvuruForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                alert("Form tasarımı hazır. Kayıt işlemini bir sonraki adımda bağlayacağız.");
+            });
+        });
     </script>
 }
