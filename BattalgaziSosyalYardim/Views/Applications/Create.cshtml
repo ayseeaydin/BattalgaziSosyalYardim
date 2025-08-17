@@ -1,112 +1,174 @@
-﻿@model BattalgaziSosyalYardim.Models.ApplicationCreateViewModel
-@{
-    ViewData["Title"] = Model.ProgramTitle;
-    Layout = "_Layout";
+﻿@{
+    ViewData["Title"] = "0-2 Yaş Bebek Bezi Desteği Başvuru Formu";
+    var programTitle = (ViewData["ProgramTitle"] as string) ?? "Bebek Bezi Desteği";
 }
 
 <style>
     body {
+        /* Arka plan fotoğrafı */
         background: url('/img/bg-battalgazi.jpg') no-repeat center center fixed;
         background-size: cover;
     }
+
+    /* Ortadaki kart */
     .form-shell {
-        max-width: 900px;
+        max-width: 980px;
         margin: 48px auto;
         background: rgba(255,255,255,0.92);
         border-radius: 18px;
         box-shadow: 0 18px 40px rgba(0,0,0,.25);
-        padding: 24px 22px 10px;
+        padding: 24px 28px 20px;
         position: relative;
     }
-    .title-row {
-        display:flex; align-items:center; justify-content:center; gap:12px;
+
+    .form-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+        .form-header img {
+            height: 58px;
+        }
+
+    .form-title {
+        text-align: center;
+        font-weight: 800;
+        font-size: 24px;
         margin: 10px 0 18px;
     }
-    .title-row img.logo-left { width:90px; }
-    .title-row img.logo-right { width:90px; margin-left:auto; }
-    .title-text { font-size: 26px; font-weight: 800; text-align:center; flex:1; }
-    .label-col { width: 220px; color:#333; font-weight:600; padding:14px 10px; }
-    .input-col { padding:10px; }
-    .submit-wrap { text-align:center; margin-top: 8px; margin-bottom: 16px; }
-    .btn-apply { font-weight:700; padding:13px 22px; border-radius:12px; }
-    .footer-note { text-align:center; color:#6b6b6b; font-weight:600; padding:10px 0 2px; }
-    .calendar-icon { position:absolute; right:16px; top:50%; transform:translateY(-50%); opacity:.5 }
-    .date-wrap { position:relative; }
+
+    .label-col {
+        width: 220px;
+        color: #333;
+        font-weight: 600;
+        padding-right: 16px;
+        white-space: nowrap;
+    }
+
+    .row-item {
+        display: flex;
+        align-items: center;
+        margin: 14px 0;
+    }
+
+        .row-item input[type="text"],
+        .row-item input[type="tel"],
+        .row-item input[type="date"] {
+            flex: 1 1 auto;
+            height: 42px;
+            border-radius: 10px;
+            border: 1px solid #e1e1e1;
+            padding: 0 14px;
+            outline: none;
+            background: #fff;
+        }
+
+    .submit-wrap {
+        text-align: center;
+        margin: 22px 0 6px;
+    }
+
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: 0;
+        border-radius: 10px;
+        padding: 12px 18px;
+        background: #2CB170;
+        color: #fff;
+        font-weight: 700;
+        box-shadow: 0 10px 18px rgba(0,0,0,.18);
+        cursor: pointer;
+    }
+
+    .footer-line {
+        text-align: center;
+        color: #444;
+        font-weight: 600;
+        margin-top: 8px;
+        padding: 10px 0;
+        background: rgba(255,255,255,0.85);
+        border-radius: 0 0 14px 14px;
+    }
+
+    /* Bootstrap modal override ufak dokunuşlar */
+    .modal-content {
+        border-radius: 14px;
+    }
+
+    .modal-header {
+        border-bottom: 0;
+    }
+
+    .modal-title {
+        font-weight: 800;
+    }
+
+    .modal-body ul {
+        margin: 0 0 0 18px;
+    }
+
+    .modal-body li {
+        margin: 6px 0;
+    }
+
+    .note-red {
+        color: #d41414;
+        font-weight: 800;
+    }
 </style>
 
 <div class="form-shell">
-    <div class="title-row">
-        <img class="logo-left" src="/img/battalgazi-logo.png" alt="Battalgazi" />
-        <div class="title-text">@Model.ProgramTitle</div>
-        <img class="logo-right" src="/img/social-aid-logo.png" alt="Sosyal Yardım" />
+    <div class="form-header">
+        <img src="/img/battalgazi-logo.png" alt="Battalgazi Belediyesi" />
+        <img src="/img/bebek-yardim-logo.png" onerror="this.style.display='none';" alt="" />
     </div>
 
-    <form asp-action="Create" method="post" novalidate>
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="ProgramCode" />
+    <div class="form-title">0-2 YAŞ BEBEK BEZİ DESTEĞİ BAŞVURU FORMU</div>
 
-        <div class="row g-0">
-            <div class="col-12 col-md-4 label-col">Anne T.C. Kimlik No</div>
-            <div class="col-12 col-md-8 input-col">
-                <input asp-for="MotherNationalId" class="form-control" maxlength="11" />
-                <span class="text-danger" asp-validation-for="MotherNationalId"></span>
-            </div>
+    <form method="post" action="#">
+        <!-- NOT: Şimdilik yalnızca görünüm. Post action'ı ekleyince değiştiririz. -->
+        <div class="row-item">
+            <div class="label-col">Anne T.C. Kimlik No</div>
+            <input type="text" name="MotherNationalId" maxlength="11" placeholder="11 haneli TCKN" />
+        </div>
 
-            <div class="col-12 col-md-4 label-col">Anne Doğum Tarihi</div>
-            <div class="col-12 col-md-8 input-col">
-                <div class="date-wrap">
-                    <input asp-for="MotherBirthDate" class="form-control" type="date" />
-                    <span class="calendar-icon bi bi-calendar3"></span>
-                </div>
-                <span class="text-danger" asp-validation-for="MotherBirthDate"></span>
-            </div>
+        <div class="row-item">
+            <div class="label-col">Anne Doğum Tarihi</div>
+            <input type="date" name="MotherBirthDate" />
+        </div>
 
-            <div class="col-12 col-md-4 label-col">Anne Ad Soyad</div>
-            <div class="col-12 col-md-8 input-col">
-                <input asp-for="MotherFullName" class="form-control" />
-                <span class="text-danger" asp-validation-for="MotherFullName"></span>
-            </div>
+        <div class="row-item">
+            <div class="label-col">Anne Ad Soyad</div>
+            <input type="text" name="MotherFullName" placeholder="Ad Soyad" />
+        </div>
 
-            <div class="col-12 col-md-4 label-col">Telefon</div>
-            <div class="col-12 col-md-8 input-col">
-                <input asp-for="PhoneNumber" class="form-control" placeholder="05XXXXXXXXX" />
-                <span class="text-danger" asp-validation-for="PhoneNumber"></span>
-            </div>
+        <div class="row-item">
+            <div class="label-col">Telefon</div>
+            <input type="tel" name="PhoneNumber" placeholder="05XXXXXXXXX" />
+        </div>
 
-            <div class="col-12 col-md-4 label-col">Bebek T.C. Kimlik No</div>
-            <div class="col-12 col-md-8 input-col">
-                <input asp-for="BabyNationalId" class="form-control" maxlength="11" />
-                <span class="text-danger" asp-validation-for="BabyNationalId"></span>
-            </div>
+        <div class="row-item">
+            <div class="label-col">Bebek T.C. Kimlik No</div>
+            <input type="text" name="BabyNationalId" maxlength="11" placeholder="11 haneli TCKN" />
         </div>
 
         <div class="submit-wrap">
-            <button type="submit" class="btn btn-success btn-apply">
-                <i class="bi bi-clipboard-check"></i> Başvuru Yap
+            <button class="btn-submit" type="submit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 12l18-9-9 18-2-7-7-2z" /></svg>
+                Başvuru Yap
             </button>
         </div>
     </form>
 
-    <div class="footer-note">Battalgazi Belediyesi Bilgi İşlem Müdürlüğü</div>
+    <div class="footer-line">Battalgazi Belediyesi Bilgi İşlem Müdürlüğü</div>
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-
-    <!-- Bootstrap modal’ı otomatik aç -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const modalEl = document.getElementById('programInfoModal');
-            if (modalEl) {
-                const m = new bootstrap.Modal(modalEl, { backdrop: 'static', keyboard: true });
-                m.show();
-            }
-        });
-    </script>
-}
-
-<!-- Bilgilendirme Modal (ekrandakiyle uyumlu metin) -->
-<div class="modal fade" id="programInfoModal" tabindex="-1" aria-hidden="true">
+<!-- Bilgilendirme Modal (Bootstrap 5) -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -114,26 +176,44 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
             <div class="modal-body">
-                <p><b>Müdürlük:</b> SOSYAL YARDIM İŞLERİ ŞUBE MÜDÜRLÜĞÜ</p>
-                <p><b>Projenin amacı:</b> 2025 “Aile yılı” kapsamında bebek bezi desteği</p>
-                <p><b>Proje başlangıcı:</b> 01.06.2025</p>
-                <p><b>Proje bitimi:</b> 31.12.2025</p>
+                <p><strong>Müdürlük:</strong> SOSYAL YARDIM İŞLERİ ŞUBE MÜDÜRLÜĞÜ</p>
+                <p><strong>Projenin amacı:</strong> 2025 “Aile yılı” kapsamında bebek bezi desteği</p>
+                <p><strong>Proje başlangıcı:</strong> 01.06.2025</p>
+                <p><strong>Proje bitimi:</strong> 31.12.2025</p>
                 <ul>
                     <li>TÜRKİYE CUMHURİYETİ vatandaşı olmak</li>
-                    <li>Battalgazi ilçe sınırlarında ikamet ediyor olmak</li>
+                    <li>Battalgazi ilçe sınırlarında ikamet ediyor olması</li>
                     <li>Bez desteği alacak çocukların 0 ile 24 ay arasında olması</li>
-                    <li>Ailenin dar gelirli olması (iki asgari ücretin altında olması gerekmektedir.)</li>
+                    <li>Ailenin dar gelirli olması (dar gelirli: iki asgari ücretin altında olması gerekmektedir.)</li>
                     <li>Sosyal uyum yardımı alamayan aileler başvurabilir</li>
                     <li>Eksik ve sahte olduğu tespit edilen başvurular kabul edilmeyecektir</li>
                     <li>Başvurular bebeğin annesi üzerinden online olarak yapılacaktır</li>
                 </ul>
-                <p class="text-danger fw-bold">
-                    NOT: BAŞVURULAR SADECE ONLINE SİSTEM ÜZERİNDEN KABUL EDİLMEKTEDİR.
-                </p>
+                <p class="note-red mt-3">NOT: BAŞVURULAR SADECE ONLINE SİSTEM ÜZERİNDEN KABUL EDİLMEKTEDİR.</p>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-dismiss="modal">Tamam</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tamam</button>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <!-- Bootstrap 5 modali otomatik aç + bir kez göster -->
+    <script>
+        (function () {
+            const KEY = "bbd_info_shown";
+            const modalEl = document.getElementById('infoModal');
+
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl, { backdrop: 'static' });
+
+                // sadece 1 kere gösterilsin
+                if (!localStorage.getItem(KEY)) {
+                    modal.show();
+                    localStorage.setItem(KEY, "1");
+                }
+            }
+        })();
+    </script>
+}
