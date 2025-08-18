@@ -96,11 +96,14 @@
         <div class="yardim-title">Yardım Türünü Seçin</div>
 
         <div class="yardim-cards-container">
-            <a href="/Talep" class="yardim-card">
+            <!-- Bez Desteği: Applications/Create?programCode=bez-destegi -->
+            <a class="yardim-card"
+               href="@Url.Action("Create", "Applications", new { programCode = "bez-destegi" })">
                 <span class="material-icons">baby_changing_station</span>
                 <div><strong>Bez Desteği</strong></div>
             </a>
 
+            <!-- Pasif kart (yakında) -->
             <a class="yardim-card disabled-card" title="Yakında">
                 <span class="material-icons">edit</span>
                 <div><strong>Kırtasiye Yardımı (Yakında)</strong></div>

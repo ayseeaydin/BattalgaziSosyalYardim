@@ -4,17 +4,14 @@ namespace BattalgaziSosyalYardim.Controllers
 {
     public class ApplicationsController : Controller
     {
+        // GET: /Applications/Create?programCode=bez-destegi
         [HttpGet]
-        public IActionResult Create(string? programCode = null)
+        public IActionResult Create(string? programCode)
         {
-            // ekranda başlık vs. için istersen kullanırsın
-            ViewData["ProgramTitle"] = programCode == "bez-destegi"
-                ? "Bebek Bezi Desteği"
-                : "Başvuru Formu";
-
+            // (İstersen Create.cshtml’de kullanırsın)
+            ViewData["ProgramCode"] = programCode ?? "bez-destegi";
+            ViewData["ProgramTitle"] = "0-2 YAŞ BEBEK BEZİ DESTEĞİ BAŞVURU FORMU";
             return View();
         }
-
-        // İleride POST action ekleyeceğiz (şimdilik görünüm odaklıyız)
     }
 }
