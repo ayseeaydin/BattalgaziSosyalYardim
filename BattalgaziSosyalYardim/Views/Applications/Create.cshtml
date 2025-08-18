@@ -1,4 +1,6 @@
-﻿@{
+﻿@model BattalgaziSosyalYardim.Models.ApplicationCreateViewModel
+
+@{
     Layout = "~/Views/Shared/_Bootstrap5Layout.cshtml";
     ViewData["Title"] = "Başvuru Formu";
 }
@@ -75,91 +77,66 @@
         </div>
 
         <div class="card-body p-4">
-            <!-- İsteğe bağlı genel uyarı alanı -->
-            <div id="formSummary" class="alert alert-danger d-none" role="alert"></div>
+            <!-- Özet hata alanı (Sunucu tarafı doğrulama) -->
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-            <form id="basvuruForm" method="post" novalidate>
+            <!-- İsteğe bağlı genel uyarı alanı (İstemci tarafı) -->
+            <div id="formClientSummary" class="alert alert-danger d-none" role="alert"></div>
+
+            <form asp-action="Create" asp-controller="Talep" method="post" id="basvuruForm" novalidate>
+                @Html.AntiForgeryToken()
+
                 <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold req" for="AnneTC">Anne T.C. Kimlik No</label>
+                    <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherNationalId"></label>
                     <div class="col-md-8">
                         <input class="form-control"
-                               id="AnneTC" name="AnneTC"
-                               type="text"
-                               autocomplete="off"
+                               asp-for="MotherNationalId"
                                inputmode="numeric"
-                               pattern="^[1-9][0-9]{10}$"
                                maxlength="11"
-                               required
-                               aria-describedby="AnneTCFeedback" />
-                        <div id="AnneTCFeedback" class="invalid-feedback">
-                            Lütfen geçerli bir T.C. Kimlik No giriniz (11 hane, ilk hanesi 0 olamaz).
-                        </div>
+                               aria-describedby="MotherNationalIdFeedback" />
+                        <span id="MotherNationalIdFeedback" class="text-danger" asp-validation-for="MotherNationalId"></span>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold req" for="DogumTarihi">Anne Doğum Tarihi</label>
+                    <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherBirthDate"></label>
                     <div class="col-md-8">
-                        <input class="form-control"
-                               id="DogumTarihi" name="DogumTarihi"
-                               type="date"
-                               required
-                               aria-describedby="DogumTarihiFeedback" />
-                        <div id="DogumTarihiFeedback" class="invalid-feedback">
-                            Lütfen geçerli bir tarih giriniz (bugünden ileri olamaz).
-                        </div>
+                        <input class="form-control" asp-for="MotherBirthDate" type="date" aria-describedby="MotherBirthDateFeedback" />
+                        <span id="MotherBirthDateFeedback" class="text-danger" asp-validation-for="MotherBirthDate"></span>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold req" for="AnneAdSoyad">Anne Ad Soyad</label>
+                    <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherFullName"></label>
                     <div class="col-md-8">
-                        <input class="form-control"
-                               id="AnneAdSoyad" name="AnneAdSoyad"
-                               type="text"
-                               maxlength="100"
-                               required
-                               aria-describedby="AnneAdSoyadFeedback" />
-                        <div id="AnneAdSoyadFeedback" class="invalid-feedback">
-                            Lütfen ad soyad bilgisini giriniz.
-                        </div>
+                        <input class="form-control" asp-for="MotherFullName" maxlength="100" aria-describedby="MotherFullNameFeedback" />
+                        <span id="MotherFullNameFeedback" class="text-danger" asp-validation-for="MotherFullName"></span>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold req" for="Telefon">Telefon</label>
+                    <label class="col-md-4 col-form-label fw-semibold req" asp-for="PhoneNumber"></label>
                     <div class="col-md-8">
-                        <input class="form-control"
-                               id="Telefon" name="Telefon"
-                               type="tel"
-                               inputmode="tel"
-                               pattern="^0?5[0-9]{9}$"
-                               maxlength="11"
-                               required
-                               aria-describedby="TelefonFeedback" />
-                        <div id="TelefonFeedback" class="invalid-feedback">
-                            Lütfen 05XXXXXXXXX formatında bir GSM numarası giriniz.
-                        </div>
+                        <input class="form-control" asp-for="PhoneNumber" inputmode="tel" maxlength="11" aria-describedby="PhoneNumberFeedback" />
+                        <span id="PhoneNumberFeedback" class="text-danger" asp-validation-for="PhoneNumber"></span>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold req" for="BebekTC">Bebek T.C. Kimlik No</label>
+                    <label class="col-md-4 col-form-label fw-semibold req" asp-for="BabyNationalId"></label>
                     <div class="col-md-8">
                         <input class="form-control"
-                               id="BebekTC" name="BebekTC"
-                               type="text"
-                               autocomplete="off"
+                               asp-for="BabyNationalId"
                                inputmode="numeric"
-                               pattern="^[1-9][0-9]{10}$"
                                maxlength="11"
-                               required
-                               aria-describedby="BebekTCFeedback" />
-                        <div id="BebekTCFeedback" class="invalid-feedback">
-                            Lütfen geçerli bir bebek T.C. Kimlik No giriniz (11 hane).
-                        </div>
+                               aria-describedby="BabyNationalIdFeedback" />
+                        <span id="BabyNationalIdFeedback" class="text-danger" asp-validation-for="BabyNationalId"></span>
                     </div>
                 </div>
+
+                @* Program sabit *@
+                <input type="hidden" asp-for="ProgramCode" />
+                <input type="hidden" asp-for="ProgramTitle" />
 
                 <div class="text-center">
                     <button type="submit" id="submitBtn" class="btn btn-success">📤 Başvuru Yap</button>
@@ -229,14 +206,14 @@
             modal.show();
 
             // Doğum tarihi: bugünden ileri olamaz
-            const d = document.getElementById("DogumTarihi");
+            const d = document.getElementById("MotherBirthDate");
             if (d) {
                 const today = new Date().toISOString().slice(0,10);
                 d.setAttribute("max", today);
             }
 
-            // Numerik alanlarda (TCKN) yalnızca rakamlara izin ver
-            ["AnneTC", "BebekTC"].forEach(id => {
+            // Numerik alanlar (TCKN) yalnızca rakam
+            ["MotherNationalId", "BabyNationalId"].forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
                 el.addEventListener("input", () => {
@@ -244,30 +221,30 @@
                 });
             });
 
-            // Telefon alanında 11 haneyi sınırla (05xxxxxxxxx)
-            const tel = document.getElementById("Telefon");
+            // Telefon: 11 hane (05xxxxxxxxx)
+            const tel = document.getElementById("PhoneNumber");
             if (tel) {
                 tel.addEventListener("input", () => {
                     tel.value = onlyDigits(tel.value).slice(0,11);
                 });
             }
 
-            // Bootstrap 5 + özel doğrulama
+            // İstemci tarafı ek kontroller (HTML5 + özel)
             const form = document.getElementById("basvuruForm");
-            const summary = document.getElementById("formSummary");
+            const summary = document.getElementById("formClientSummary");
 
             form.addEventListener("submit", function (e) {
-                // Önce HTML5 doğrulama
-                // (pattern/required/max vb. built-in kurallar)
-                // Sonra ek özel kontrolleri çalıştıracağız.
-                // Bootstrap görselleştirmesi için:
+                // Önce önceki görsel işaretlemeleri temizle
                 const controls = form.querySelectorAll(".form-control");
                 controls.forEach(c => c.classList.remove("is-invalid"));
+                summary.classList.add("d-none");
+                summary.innerHTML = "";
 
                 let errors = [];
 
                 // Zorunlu alan boş mu?
-                ["AnneTC","DogumTarihi","AnneAdSoyad","Telefon","BebekTC"].forEach(id => {
+                const requiredIds = ["MotherNationalId","MotherBirthDate","MotherFullName","PhoneNumber","BabyNationalId"];
+                requiredIds.forEach(id => {
                     const el = document.getElementById(id);
                     if (!el || !el.value.trim()) {
                         el?.classList.add("is-invalid");
@@ -276,50 +253,45 @@
                 });
 
                 // TCKN format + algoritma
-                const anne = document.getElementById("AnneTC")?.value.trim() || "";
-                if (!/^[1-9]\d{10}$/.test(anne) || !isValidTckn(anne)) {
-                    document.getElementById("AnneTC")?.classList.add("is-invalid");
+                const anne = document.getElementById("MotherNationalId")?.value.trim() || "";
+                if (anne && (!/^[1-9]\d{10}$/.test(anne) || !isValidTckn(anne))) {
+                    document.getElementById("MotherNationalId")?.classList.add("is-invalid");
                     errors.push("Anne T.C. Kimlik No geçersiz.");
                 }
 
-                const bebek = document.getElementById("BebekTC")?.value.trim() || "";
-                if (!/^[1-9]\d{10}$/.test(bebek) || !isValidTckn(bebek)) {
-                    document.getElementById("BebekTC")?.classList.add("is-invalid");
+                const bebek = document.getElementById("BabyNationalId")?.value.trim() || "";
+                if (bebek && (!/^[1-9]\d{10}$/.test(bebek) || !isValidTckn(bebek))) {
+                    document.getElementById("BabyNationalId")?.classList.add("is-invalid");
                     errors.push("Bebek T.C. Kimlik No geçersiz.");
                 }
 
                 // Telefon (05xxxxxxxxx)
-                const phone = document.getElementById("Telefon")?.value.trim() || "";
-                if (!/^0?5\d{9}$/.test(phone)) {
-                    document.getElementById("Telefon")?.classList.add("is-invalid");
+                const phone = document.getElementById("PhoneNumber")?.value.trim() || "";
+                if (phone && !/^0?5\d{9}$/.test(phone)) {
+                    document.getElementById("PhoneNumber")?.classList.add("is-invalid");
                     errors.push("Telefon 05XXXXXXXXX formatında olmalıdır.");
                 }
 
                 // Doğum tarihi kontrolü (gelecek tarih olamaz)
-                const dob = document.getElementById("DogumTarihi")?.value;
+                const dob = document.getElementById("MotherBirthDate")?.value;
                 if (dob) {
                     const today = new Date().toISOString().slice(0,10);
                     if (dob > today) {
-                        document.getElementById("DogumTarihi")?.classList.add("is-invalid");
+                        document.getElementById("MotherBirthDate")?.classList.add("is-invalid");
                         errors.push("Anne doğum tarihi bugünden ileri olamaz.");
                     }
                 }
 
+                // Hata varsa gönderimi engelle ve özet göster
                 if (errors.length > 0) {
                     e.preventDefault();
                     summary.classList.remove("d-none");
                     summary.innerHTML = "Lütfen formu kontrol ediniz:<ul class='mb-0'>" +
                         errors.map(x => `<li>${x}</li>`).join("") + "</ul>";
-                    // İlk hatalı inputa odaklan
                     const firstInvalid = form.querySelector(".is-invalid");
                     firstInvalid?.focus();
-                    return false;
                 }
-
-                // Şimdilik gerçek POST’a bağlamadık — demo mesajı:
-                e.preventDefault();
-                alert("Form tasarımı ve doğrulamalar hazır. Bir sonraki adımda kayda bağlayacağız.");
-                return false;
+                // Hata yoksa: e.preventDefault() YOK → form sunucuya POST edilir.
             });
         });
     </script>
