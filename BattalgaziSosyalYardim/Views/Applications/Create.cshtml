@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Bootstrap5Layout.cshtml";   // ÖNEMLİ: yalın Bootstrap 5 layout’u
+    Layout = "~/Views/Shared/_Bootstrap5Layout.cshtml";
     ViewData["Title"] = "Başvuru Formu";
 }
 
@@ -54,6 +54,12 @@
             background-color: azure;
             color: black;
         }
+
+        .req::after {
+            content: " *";
+            color: #d00;
+            font-weight: 700;
+        }
     </style>
 }
 
@@ -69,30 +75,90 @@
         </div>
 
         <div class="card-body p-4">
-            <form id="basvuruForm" method="post">
+            <!-- İsteğe bağlı genel uyarı alanı -->
+            <div id="formSummary" class="alert alert-danger d-none" role="alert"></div>
+
+            <form id="basvuruForm" method="post" novalidate>
                 <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold" for="AnneTC">Anne T.C. Kimlik No</label>
-                    <div class="col-md-8"><input class="form-control" type="text" id="AnneTC" name="AnneTC" /></div>
+                    <label class="col-md-4 col-form-label fw-semibold req" for="AnneTC">Anne T.C. Kimlik No</label>
+                    <div class="col-md-8">
+                        <input class="form-control"
+                               id="AnneTC" name="AnneTC"
+                               type="text"
+                               autocomplete="off"
+                               inputmode="numeric"
+                               pattern="^[1-9][0-9]{10}$"
+                               maxlength="11"
+                               required
+                               aria-describedby="AnneTCFeedback" />
+                        <div id="AnneTCFeedback" class="invalid-feedback">
+                            Lütfen geçerli bir T.C. Kimlik No giriniz (11 hane, ilk hanesi 0 olamaz).
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold" for="DogumTarihi">Anne Doğum Tarihi</label>
-                    <div class="col-md-8"><input type="date" class="form-control" id="DogumTarihi" name="DogumTarihi" /></div>
+                    <label class="col-md-4 col-form-label fw-semibold req" for="DogumTarihi">Anne Doğum Tarihi</label>
+                    <div class="col-md-8">
+                        <input class="form-control"
+                               id="DogumTarihi" name="DogumTarihi"
+                               type="date"
+                               required
+                               aria-describedby="DogumTarihiFeedback" />
+                        <div id="DogumTarihiFeedback" class="invalid-feedback">
+                            Lütfen geçerli bir tarih giriniz (bugünden ileri olamaz).
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold" for="AnneAdSoyad">Anne Ad Soyad</label>
-                    <div class="col-md-8"><input class="form-control" type="text" id="AnneAdSoyad" name="AnneAdSoyad" /></div>
+                    <label class="col-md-4 col-form-label fw-semibold req" for="AnneAdSoyad">Anne Ad Soyad</label>
+                    <div class="col-md-8">
+                        <input class="form-control"
+                               id="AnneAdSoyad" name="AnneAdSoyad"
+                               type="text"
+                               maxlength="100"
+                               required
+                               aria-describedby="AnneAdSoyadFeedback" />
+                        <div id="AnneAdSoyadFeedback" class="invalid-feedback">
+                            Lütfen ad soyad bilgisini giriniz.
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold" for="Telefon">Telefon</label>
-                    <div class="col-md-8"><input class="form-control" type="tel" id="Telefon" name="Telefon" /></div>
+                    <label class="col-md-4 col-form-label fw-semibold req" for="Telefon">Telefon</label>
+                    <div class="col-md-8">
+                        <input class="form-control"
+                               id="Telefon" name="Telefon"
+                               type="tel"
+                               inputmode="tel"
+                               pattern="^0?5[0-9]{9}$"
+                               maxlength="11"
+                               required
+                               aria-describedby="TelefonFeedback" />
+                        <div id="TelefonFeedback" class="invalid-feedback">
+                            Lütfen 05XXXXXXXXX formatında bir GSM numarası giriniz.
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold" for="BebekTC">Bebek T.C. Kimlik No</label>
-                    <div class="col-md-8"><input class="form-control" type="text" id="BebekTC" name="BebekTC" /></div>
+                    <label class="col-md-4 col-form-label fw-semibold req" for="BebekTC">Bebek T.C. Kimlik No</label>
+                    <div class="col-md-8">
+                        <input class="form-control"
+                               id="BebekTC" name="BebekTC"
+                               type="text"
+                               autocomplete="off"
+                               inputmode="numeric"
+                               pattern="^[1-9][0-9]{10}$"
+                               maxlength="11"
+                               required
+                               aria-describedby="BebekTCFeedback" />
+                        <div id="BebekTCFeedback" class="invalid-feedback">
+                            Lütfen geçerli bir bebek T.C. Kimlik No giriniz (11 hane).
+                        </div>
+                    </div>
                 </div>
 
                 <div class="text-center">
@@ -141,20 +207,119 @@
 
 @section Scripts {
     <script>
+        // ---- Yardımcılar ----
+        function onlyDigits(str) { return (str || "").replace(/\D+/g, ""); }
+
+        // Türkiye TCKN algoritması (11 hane, kontrol basamakları)
+        function isValidTckn(v) {
+            if (!/^[1-9]\d{10}$/.test(v)) return false;
+            const d = v.split("").map(Number);
+            const oddSum  = d[0] + d[2] + d[4] + d[6] + d[8];
+            const evenSum = d[1] + d[3] + d[5] + d[7];
+            const digit10 = ((oddSum * 7) - evenSum) % 10;
+            if (digit10 !== d[9]) return false;
+            const digit11 = (d.slice(0,10).reduce((a, b) => a + b, 0)) % 10;
+            return digit11 === d[10];
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             // Modal: her açılışta göster
             const modalEl = document.getElementById('basvuruModal');
             const modal = new bootstrap.Modal(modalEl, { backdrop: 'static' });
             modal.show();
 
-            // (İsteğe bağlı) bugünkü tarihi otomatik yaz
+            // Doğum tarihi: bugünden ileri olamaz
             const d = document.getElementById("DogumTarihi");
-            if (d && !d.value) d.value = new Date().toISOString().slice(0,10);
+            if (d) {
+                const today = new Date().toISOString().slice(0,10);
+                d.setAttribute("max", today);
+            }
 
-            // Form submit (şimdilik sadece görsel—gerçek POST’a sonra bağlarız)
-            document.getElementById("basvuruForm").addEventListener("submit", function (e) {
+            // Numerik alanlarda (TCKN) yalnızca rakamlara izin ver
+            ["AnneTC", "BebekTC"].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.addEventListener("input", () => {
+                    el.value = onlyDigits(el.value).slice(0,11);
+                });
+            });
+
+            // Telefon alanında 11 haneyi sınırla (05xxxxxxxxx)
+            const tel = document.getElementById("Telefon");
+            if (tel) {
+                tel.addEventListener("input", () => {
+                    tel.value = onlyDigits(tel.value).slice(0,11);
+                });
+            }
+
+            // Bootstrap 5 + özel doğrulama
+            const form = document.getElementById("basvuruForm");
+            const summary = document.getElementById("formSummary");
+
+            form.addEventListener("submit", function (e) {
+                // Önce HTML5 doğrulama
+                // (pattern/required/max vb. built-in kurallar)
+                // Sonra ek özel kontrolleri çalıştıracağız.
+                // Bootstrap görselleştirmesi için:
+                const controls = form.querySelectorAll(".form-control");
+                controls.forEach(c => c.classList.remove("is-invalid"));
+
+                let errors = [];
+
+                // Zorunlu alan boş mu?
+                ["AnneTC","DogumTarihi","AnneAdSoyad","Telefon","BebekTC"].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el || !el.value.trim()) {
+                        el?.classList.add("is-invalid");
+                        errors.push(`${id} zorunludur.`);
+                    }
+                });
+
+                // TCKN format + algoritma
+                const anne = document.getElementById("AnneTC")?.value.trim() || "";
+                if (!/^[1-9]\d{10}$/.test(anne) || !isValidTckn(anne)) {
+                    document.getElementById("AnneTC")?.classList.add("is-invalid");
+                    errors.push("Anne T.C. Kimlik No geçersiz.");
+                }
+
+                const bebek = document.getElementById("BebekTC")?.value.trim() || "";
+                if (!/^[1-9]\d{10}$/.test(bebek) || !isValidTckn(bebek)) {
+                    document.getElementById("BebekTC")?.classList.add("is-invalid");
+                    errors.push("Bebek T.C. Kimlik No geçersiz.");
+                }
+
+                // Telefon (05xxxxxxxxx)
+                const phone = document.getElementById("Telefon")?.value.trim() || "";
+                if (!/^0?5\d{9}$/.test(phone)) {
+                    document.getElementById("Telefon")?.classList.add("is-invalid");
+                    errors.push("Telefon 05XXXXXXXXX formatında olmalıdır.");
+                }
+
+                // Doğum tarihi kontrolü (gelecek tarih olamaz)
+                const dob = document.getElementById("DogumTarihi")?.value;
+                if (dob) {
+                    const today = new Date().toISOString().slice(0,10);
+                    if (dob > today) {
+                        document.getElementById("DogumTarihi")?.classList.add("is-invalid");
+                        errors.push("Anne doğum tarihi bugünden ileri olamaz.");
+                    }
+                }
+
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    summary.classList.remove("d-none");
+                    summary.innerHTML = "Lütfen formu kontrol ediniz:<ul class='mb-0'>" +
+                        errors.map(x => `<li>${x}</li>`).join("") + "</ul>";
+                    // İlk hatalı inputa odaklan
+                    const firstInvalid = form.querySelector(".is-invalid");
+                    firstInvalid?.focus();
+                    return false;
+                }
+
+                // Şimdilik gerçek POST’a bağlamadık — demo mesajı:
                 e.preventDefault();
-                alert("Form tasarımı hazır. Kayıt işlemini bir sonraki adımda bağlayacağız.");
+                alert("Form tasarımı ve doğrulamalar hazır. Bir sonraki adımda kayda bağlayacağız.");
+                return false;
             });
         });
     </script>
