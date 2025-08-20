@@ -90,7 +90,7 @@ namespace BattalgaziSosyalYardim.Migrations.AppDb
                         .HasColumnType("text");
 
                     b.Property<DateTime>("MotherBirthDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("date");
 
                     b.Property<string>("MotherFirstName")
                         .IsRequired()

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BattalgaziSosyalYardim.Migrations.AppDb
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250820215820_Change_MotherBirthDate_ToDate")]
-    partial class Change_MotherBirthDate_ToDate
+    [Migration("20250820225307_MotherBirthDate_ToDate")]
+    partial class MotherBirthDate_ToDate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,7 +93,7 @@ namespace BattalgaziSosyalYardim.Migrations.AppDb
                         .HasColumnType("text");
 
                     b.Property<DateTime>("MotherBirthDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("date");
 
                     b.Property<string>("MotherFirstName")
                         .IsRequired()
