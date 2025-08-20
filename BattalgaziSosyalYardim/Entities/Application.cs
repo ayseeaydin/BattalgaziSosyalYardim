@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BattalgaziSosyalYardim.Entities
 {
@@ -23,6 +24,7 @@ namespace BattalgaziSosyalYardim.Entities
         public string MotherLastName { get; set; } = default!;
 
         [Required]
+        [Column(TypeName ="date")]
         public DateTime MotherBirthDate { get; set; }
 
         [Required]

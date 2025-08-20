@@ -80,7 +80,8 @@
 
         <div class="card-body p-4">
 
-            @* Sunucu tarafı doğrulama özetini, alan adlarını Türkçe etiketlerle göster *@
+            @* Sunucu tarafı doğrulama özetini, alan adlarını Türkçe etiketlerle göster
+               (GLOBAL HATALAR DAHİL) *@
             @{
                 var labels = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
@@ -90,12 +91,16 @@
                     [nameof(Model.PhoneNumber)] = "Telefon",
                     [nameof(Model.BabyNationalId)] = "Bebek T.C. Kimlik No"
                 };
+
+                // Değişiklik: global (boş key) hataları da dahil ettik
                 var allErrors = ViewData.ModelState
-                .Where(kv => !string.IsNullOrEmpty(kv.Key) && kv.Value?.Errors?.Count > 0)
+                .Where(kv => kv.Value?.Errors?.Count > 0)
                 .SelectMany(kv => kv.Value!.Errors.Select(e => new
                 {
                     Key = kv.Key,
-                    Label = labels.ContainsKey(kv.Key) ? labels[kv.Key] : kv.Key,
+                    Label = string.IsNullOrEmpty(kv.Key)
+                ? "Form"
+                : (labels.ContainsKey(kv.Key) ? labels[kv.Key] : kv.Key),
                     Message = e.ErrorMessage
                 }))
                 .ToList();

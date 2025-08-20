@@ -38,6 +38,10 @@ namespace BattalgaziSosyalYardim.Database
                 .Property(a => a.BabyNationalId)
                 .HasColumnType("char(11)");
 
+            modelBuilder.Entity<Application>()
+                .Property(a => a.MotherBirthDate)
+                .HasColumnType("date");
+
             // Application: string uzunlukları (DB tarafında garanti altına alalım)
             modelBuilder.Entity<Application>()
                 .Property(a => a.MotherFirstName).HasMaxLength(50);
