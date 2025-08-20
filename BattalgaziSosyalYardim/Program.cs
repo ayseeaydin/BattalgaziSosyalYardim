@@ -1,5 +1,7 @@
 using BattalgaziSosyalYardim.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using BattalgaziSosyalYardim.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // MVC
 builder.Services.AddControllersWithViews();
+
+// Auth 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login/Login";
+        options.AccessDeniedPath = "/Login/Denied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorization();
+
+builder.Services.Configure<AdminAuthOptions>(builder.Configuration.GetSection("AdminAuth"));
+
 
 var app = builder.Build();
 
@@ -23,6 +40,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();   // wwwroot için gerekli
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Rota
