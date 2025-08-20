@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BattalgaziSosyalYardim.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BattalgaziSosyalYardim.Controllers
 {
@@ -8,10 +9,15 @@ namespace BattalgaziSosyalYardim.Controllers
         [HttpGet]
         public IActionResult Create(string? programCode)
         {
-            // (İstersen Create.cshtml’de kullanırsın)
-            ViewData["ProgramCode"] = programCode ?? "bez-destegi";
-            ViewData["ProgramTitle"] = "0-2 YAŞ BEBEK BEZİ DESTEĞİ BAŞVURU FORMU";
-            return View();
+            var model = new ApplicationCreateViewModel
+            {
+                ProgramCode = string.IsNullOrWhiteSpace(programCode) ? "bez-destegi" : programCode,
+                ProgramTitle = "0-2 YAŞ BEBEK BEZİ DESTEĞİ BAŞVURU FORMU",
+                MotherBirthDate = DateTime.Today
+            };
+
+            return View(model); // <-- ÖNEMLİ
         }
+
     }
 }

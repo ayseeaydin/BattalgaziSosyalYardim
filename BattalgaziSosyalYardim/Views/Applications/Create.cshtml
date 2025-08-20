@@ -1,6 +1,8 @@
 ﻿@model BattalgaziSosyalYardim.Models.ApplicationCreateViewModel
 
 @{
+    // Bu satırlar sorun çıkarıyorsa geçici olarak kaldırabilirsin,
+    // ama normalde bu layout ile çalışıyoruz.
     Layout = "~/Views/Shared/_Bootstrap5Layout.cshtml";
     ViewData["Title"] = "Başvuru Formu";
 }
@@ -9,7 +11,7 @@
     <style>
         body {
             background: url('/thema/img/belediye.jpg') no-repeat center center fixed;
-            background-size: cover;
+            background-size: cover
         }
 
         .background-overlay {
@@ -17,14 +19,14 @@
             inset: 0;
             width: 100%;
             height: 100%;
-            filter: brightness(0.7);
-            z-index: -1;
+            filter: brightness(.7);
+            z-index: -1
         }
 
         .custom-card {
-            background-color: rgba(255,255,255,0.95);
+            background-color: rgba(255,255,255,.95);
             border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            box-shadow: 0 0 20px rgba(0,0,0,.2)
         }
 
         .form-header {
@@ -32,11 +34,11 @@
             align-items: center;
             justify-content: space-between;
             padding: 20px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #ddd
         }
 
             .form-header img {
-                height: 60px;
+                height: 60px
             }
 
             .form-header h2 {
@@ -45,7 +47,7 @@
                 margin: 0;
                 font-size: 1.5rem;
                 font-weight: bold;
-                color: #333;
+                color: #333
             }
 
         .admin-login {
@@ -54,13 +56,13 @@
             right: 15px;
             z-index: 1000;
             background-color: azure;
-            color: black;
+            color: #000
         }
 
         .req::after {
             content: " *";
             color: #d00;
-            font-weight: 700;
+            font-weight: 700
         }
     </style>
 }
@@ -72,53 +74,98 @@
     <div class="card custom-card">
         <div class="form-header">
             <img src="/thema/img/logo.png" alt="Logo" />
-            <h2>0-2 YAŞ BEBEK BEZİ DESTEĞİ BAŞVURU FORMU</h2>
+            <h2>@(Model?.ProgramTitle ?? "0-2 YAŞ BEBEK BEZİ DESTEĞİ BAŞVURU FORMU")</h2>
             <img src="/thema/img/aile.jpg" alt="Bebek" style="width:90px;" />
         </div>
 
         <div class="card-body p-4">
-            <!-- Özet hata alanı (Sunucu tarafı doğrulama) -->
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-            <!-- İsteğe bağlı genel uyarı alanı (İstemci tarafı) -->
-            <div id="formClientSummary" class="alert alert-danger d-none" role="alert"></div>
+            @* Sunucu tarafı doğrulama özetini, alan adlarını Türkçe etiketlerle göster *@
+            @{
+                var labels = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    [nameof(Model.MotherNationalId)] = "Anne T.C. Kimlik No",
+                    [nameof(Model.MotherBirthDate)] = "Anne Doğum Tarihi",
+                    [nameof(Model.MotherFullName)] = "Anne Ad Soyad",
+                    [nameof(Model.PhoneNumber)] = "Telefon",
+                    [nameof(Model.BabyNationalId)] = "Bebek T.C. Kimlik No"
+                };
+                var allErrors = ViewData.ModelState
+                .Where(kv => !string.IsNullOrEmpty(kv.Key) && kv.Value?.Errors?.Count > 0)
+                .SelectMany(kv => kv.Value!.Errors.Select(e => new
+                {
+                    Key = kv.Key,
+                    Label = labels.ContainsKey(kv.Key) ? labels[kv.Key] : kv.Key,
+                    Message = e.ErrorMessage
+                }))
+                .ToList();
+            }
+            @if (allErrors.Any())
+            {
+                <div class="alert alert-danger" role="alert">
+                    <div><strong>Lütfen formu kontrol ediniz:</strong></div>
+                    <ul class="mb-0">
+                        @foreach (var err in allErrors)
+                        {
+                            <li>@err.Label: @err.Message</li>
+                        }
+                    </ul>
+                </div>
+            }
 
-            <form asp-action="Create" asp-controller="Talep" method="post" id="basvuruForm" novalidate>
+            <form asp-action="Create" asp-controller="Applications" method="post" novalidate>
                 @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ProgramCode" />
 
                 <div class="mb-3 row">
                     <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherNationalId"></label>
                     <div class="col-md-8">
                         <input class="form-control"
                                asp-for="MotherNationalId"
-                               inputmode="numeric"
-                               maxlength="11"
+                               autocomplete="off" inputmode="numeric" maxlength="11"
                                aria-describedby="MotherNationalIdFeedback" />
-                        <span id="MotherNationalIdFeedback" class="text-danger" asp-validation-for="MotherNationalId"></span>
+                        <span id="MotherNationalIdFeedback"
+                              class="invalid-feedback d-block text-danger"
+                              asp-validation-for="MotherNationalId"></span>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
                     <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherBirthDate"></label>
                     <div class="col-md-8">
-                        <input class="form-control" asp-for="MotherBirthDate" type="date" aria-describedby="MotherBirthDateFeedback" />
-                        <span id="MotherBirthDateFeedback" class="text-danger" asp-validation-for="MotherBirthDate"></span>
+                        <input class="form-control"
+                               asp-for="MotherBirthDate"
+                               type="date"
+                               aria-describedby="MotherBirthDateFeedback" />
+                        <span id="MotherBirthDateFeedback"
+                              class="invalid-feedback d-block text-danger"
+                              asp-validation-for="MotherBirthDate"></span>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
                     <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherFullName"></label>
                     <div class="col-md-8">
-                        <input class="form-control" asp-for="MotherFullName" maxlength="100" aria-describedby="MotherFullNameFeedback" />
-                        <span id="MotherFullNameFeedback" class="text-danger" asp-validation-for="MotherFullName"></span>
+                        <input class="form-control"
+                               asp-for="MotherFullName"
+                               maxlength="100"
+                               aria-describedby="MotherFullNameFeedback" />
+                        <span id="MotherFullNameFeedback"
+                              class="invalid-feedback d-block text-danger"
+                              asp-validation-for="MotherFullName"></span>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
                     <label class="col-md-4 col-form-label fw-semibold req" asp-for="PhoneNumber"></label>
                     <div class="col-md-8">
-                        <input class="form-control" asp-for="PhoneNumber" inputmode="tel" maxlength="11" aria-describedby="PhoneNumberFeedback" />
-                        <span id="PhoneNumberFeedback" class="text-danger" asp-validation-for="PhoneNumber"></span>
+                        <input class="form-control"
+                               asp-for="PhoneNumber"
+                               inputmode="tel" maxlength="11"
+                               aria-describedby="PhoneNumberFeedback" />
+                        <span id="PhoneNumberFeedback"
+                              class="invalid-feedback d-block text-danger"
+                              asp-validation-for="PhoneNumber"></span>
                     </div>
                 </div>
 
@@ -127,19 +174,16 @@
                     <div class="col-md-8">
                         <input class="form-control"
                                asp-for="BabyNationalId"
-                               inputmode="numeric"
-                               maxlength="11"
+                               autocomplete="off" inputmode="numeric" maxlength="11"
                                aria-describedby="BabyNationalIdFeedback" />
-                        <span id="BabyNationalIdFeedback" class="text-danger" asp-validation-for="BabyNationalId"></span>
+                        <span id="BabyNationalIdFeedback"
+                              class="invalid-feedback d-block text-danger"
+                              asp-validation-for="BabyNationalId"></span>
                     </div>
                 </div>
 
-                @* Program sabit *@
-                <input type="hidden" asp-for="ProgramCode" />
-                <input type="hidden" asp-for="ProgramTitle" />
-
                 <div class="text-center">
-                    <button type="submit" id="submitBtn" class="btn btn-success">📤 Başvuru Yap</button>
+                    <button type="submit" class="btn btn-success">📤 Başvuru Yap</button>
                 </div>
             </form>
         </div>
@@ -150,8 +194,8 @@
     </div>
 </div>
 
-<!-- Açılışta görünen bilgilendirme modalı -->
-<div class="modal fade" id="basvuruModal" tabindex="-1" aria-labelledby="basvuruModalLabel" aria-hidden="true">
+<!-- Açılışta bilgilendirme -->
+<div class="modal fade" id="basvuruModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -171,7 +215,7 @@
                 • Eksik ve sahte olduğu tespit edilen başvurular kabul edilmeyecektir
                 • Başvurular bebeğin annesi üzerinden online olarak yapılacaktır
 
-                <p style="color:red; font-weight:bold; text-align:center; font-size:1.2rem;">
+                <p style="color:red;font-weight:bold;text-align:center;font-size:1.2rem;">
                     NOT: BAŞVURULAR SADECE ONLINE SİSTEM ÜZERİNDEN KABUL EDİLMEKTEDİR.
                 </p>
             </div>
@@ -183,116 +227,23 @@
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        // ---- Yardımcılar ----
-        function onlyDigits(str) { return (str || "").replace(/\D+/g, ""); }
-
-        // Türkiye TCKN algoritması (11 hane, kontrol basamakları)
-        function isValidTckn(v) {
-            if (!/^[1-9]\d{10}$/.test(v)) return false;
-            const d = v.split("").map(Number);
-            const oddSum  = d[0] + d[2] + d[4] + d[6] + d[8];
-            const evenSum = d[1] + d[3] + d[5] + d[7];
-            const digit10 = ((oddSum * 7) - evenSum) % 10;
-            if (digit10 !== d[9]) return false;
-            const digit11 = (d.slice(0,10).reduce((a, b) => a + b, 0)) % 10;
-            return digit11 === d[10];
-        }
-
+        // Modal: her açılışta göster
         document.addEventListener("DOMContentLoaded", function () {
-            // Modal: her açılışta göster
-            const modalEl = document.getElementById('basvuruModal');
-            const modal = new bootstrap.Modal(modalEl, { backdrop: 'static' });
-            modal.show();
+            const m = new bootstrap.Modal(document.getElementById('basvuruModal'), { backdrop: 'static' });
+            m.show();
+        });
 
-            // Doğum tarihi: bugünden ileri olamaz
-            const d = document.getElementById("MotherBirthDate");
-            if (d) {
-                const today = new Date().toISOString().slice(0,10);
-                d.setAttribute("max", today);
+        // Basit sayısal maskeleme
+        function onlyDigits(v){ return (v||"").replace(/\D+/g,""); }
+        document.addEventListener("input", function(e){
+            if(e.target.id==="MotherNationalId" || e.target.id==="BabyNationalId"){
+                e.target.value = onlyDigits(e.target.value).slice(0,11);
             }
-
-            // Numerik alanlar (TCKN) yalnızca rakam
-            ["MotherNationalId", "BabyNationalId"].forEach(id => {
-                const el = document.getElementById(id);
-                if (!el) return;
-                el.addEventListener("input", () => {
-                    el.value = onlyDigits(el.value).slice(0,11);
-                });
-            });
-
-            // Telefon: 11 hane (05xxxxxxxxx)
-            const tel = document.getElementById("PhoneNumber");
-            if (tel) {
-                tel.addEventListener("input", () => {
-                    tel.value = onlyDigits(tel.value).slice(0,11);
-                });
+            if(e.target.id==="PhoneNumber"){
+                e.target.value = onlyDigits(e.target.value).slice(0,11);
             }
-
-            // İstemci tarafı ek kontroller (HTML5 + özel)
-            const form = document.getElementById("basvuruForm");
-            const summary = document.getElementById("formClientSummary");
-
-            form.addEventListener("submit", function (e) {
-                // Önce önceki görsel işaretlemeleri temizle
-                const controls = form.querySelectorAll(".form-control");
-                controls.forEach(c => c.classList.remove("is-invalid"));
-                summary.classList.add("d-none");
-                summary.innerHTML = "";
-
-                let errors = [];
-
-                // Zorunlu alan boş mu?
-                const requiredIds = ["MotherNationalId","MotherBirthDate","MotherFullName","PhoneNumber","BabyNationalId"];
-                requiredIds.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (!el || !el.value.trim()) {
-                        el?.classList.add("is-invalid");
-                        errors.push(`${id} zorunludur.`);
-                    }
-                });
-
-                // TCKN format + algoritma
-                const anne = document.getElementById("MotherNationalId")?.value.trim() || "";
-                if (anne && (!/^[1-9]\d{10}$/.test(anne) || !isValidTckn(anne))) {
-                    document.getElementById("MotherNationalId")?.classList.add("is-invalid");
-                    errors.push("Anne T.C. Kimlik No geçersiz.");
-                }
-
-                const bebek = document.getElementById("BabyNationalId")?.value.trim() || "";
-                if (bebek && (!/^[1-9]\d{10}$/.test(bebek) || !isValidTckn(bebek))) {
-                    document.getElementById("BabyNationalId")?.classList.add("is-invalid");
-                    errors.push("Bebek T.C. Kimlik No geçersiz.");
-                }
-
-                // Telefon (05xxxxxxxxx)
-                const phone = document.getElementById("PhoneNumber")?.value.trim() || "";
-                if (phone && !/^0?5\d{9}$/.test(phone)) {
-                    document.getElementById("PhoneNumber")?.classList.add("is-invalid");
-                    errors.push("Telefon 05XXXXXXXXX formatında olmalıdır.");
-                }
-
-                // Doğum tarihi kontrolü (gelecek tarih olamaz)
-                const dob = document.getElementById("MotherBirthDate")?.value;
-                if (dob) {
-                    const today = new Date().toISOString().slice(0,10);
-                    if (dob > today) {
-                        document.getElementById("MotherBirthDate")?.classList.add("is-invalid");
-                        errors.push("Anne doğum tarihi bugünden ileri olamaz.");
-                    }
-                }
-
-                // Hata varsa gönderimi engelle ve özet göster
-                if (errors.length > 0) {
-                    e.preventDefault();
-                    summary.classList.remove("d-none");
-                    summary.innerHTML = "Lütfen formu kontrol ediniz:<ul class='mb-0'>" +
-                        errors.map(x => `<li>${x}</li>`).join("") + "</ul>";
-                    const firstInvalid = form.querySelector(".is-invalid");
-                    firstInvalid?.focus();
-                }
-                // Hata yoksa: e.preventDefault() YOK → form sunucuya POST edilir.
-            });
         });
     </script>
 }
