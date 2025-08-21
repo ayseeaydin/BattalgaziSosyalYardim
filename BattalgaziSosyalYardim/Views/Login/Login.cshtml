@@ -1,0 +1,43 @@
+﻿@model BattalgaziSosyalYardim.Models.LoginViewModel
+@{
+    Layout = "_Bootstrap5Layout";
+    ViewData["Title"] = "Yönetici Girişi";
+    var returnUrl = (string?)ViewData["ReturnUrl"] ?? "/Admin";
+}
+<div class="container" style="max-width:480px;margin-top:48px;">
+    <div class="card">
+        <div class="card-header"><strong>Yönetici Girişi</strong></div>
+        <div class="card-body">
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+                <div class="mb-3">
+                    <label asp-for="NationalId" class="form-label"></label>
+                    <input asp-for="NationalId" class="form-control" inputmode="numeric" maxlength="11" autocomplete="off" />
+                    <span asp-validation-for="NationalId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control" autocomplete="current-password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // TCKN sadece rakam
+        document.addEventListener("input", function(e){
+            if (e.target.name === "NationalId") {
+                e.target.value = (e.target.value || "").replace(/\D+/g,"").slice(0,11);
+            }
+        });
+    </script>
+}

@@ -23,9 +23,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
-builder.Services.Configure<AdminAuthOptions>(builder.Configuration.GetSection("AdminAuth"));
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.  Hata yakalama / güvenlik
@@ -40,7 +37,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();   // wwwroot için gerekli
 app.UseRouting();
-app.UseAuthentication();
+app.UseAuthentication();   
 app.UseAuthorization();
 
 // Rota

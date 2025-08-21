@@ -9,6 +9,7 @@ namespace BattalgaziSosyalYardim.Database
 
         public DbSet<AidProgram> AidPrograms => Set<AidProgram>();
         public DbSet<Application> Applications => Set<Application>();
+        public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,6 +65,21 @@ namespace BattalgaziSosyalYardim.Database
                     tb.HasCheckConstraint("ck_phone_number",
                         "\"PhoneNumber\" ~ '^(?:\\+?90)?0?5[0-9]{9}$'");
                 });
+
+            // AdminUser
+            modelBuilder.Entity<AdminUser>()
+                .HasIndex(u => u.NationalId)
+                .IsUnique();
+
+            modelBuilder.Entity<AdminUser>()
+                .Property(u => u.NationalId)
+                .HasColumnType("varchar(11)");
+
+            modelBuilder.Entity<AdminUser>()
+                .Property(u => u.FirstName).HasMaxLength(50);
+
+            modelBuilder.Entity<AdminUser>()
+                .Property(u => u.LastName).HasMaxLength(50);
         }
     }
 }
