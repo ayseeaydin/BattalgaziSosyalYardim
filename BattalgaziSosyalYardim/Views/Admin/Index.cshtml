@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "_Bootstrap5Layout";
+    ViewData["Title"] = "Yönetim Paneli";
+}
+
+<div class="container" style="margin-top:24px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Yönetim Paneli</h3>
+        <form asp-controller="Login" asp-action="Logout" method="post">
+            @Html.AntiForgeryToken()
+            <button class="btn btn-outline-danger">Çıkış</button>
+        </form>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="h6 text-muted mb-1">Bekleyen Başvuru</div>
+                    <div class="display-6">@ViewBag.Pending</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="h6 text-muted mb-1">Onaylanan</div>
+                    <div class="display-6">@ViewBag.Approved</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="h6 text-muted mb-1">Reddedilen</div>
+                    <div class="display-6">@ViewBag.Rejected</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

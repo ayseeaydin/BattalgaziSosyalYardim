@@ -4,27 +4,130 @@
     ViewData["Title"] = "Yönetici Girişi";
     var returnUrl = (string?)ViewData["ReturnUrl"] ?? "/Admin";
 }
-<div class="container" style="max-width:480px;margin-top:48px;">
-    <div class="card">
-        <div class="card-header"><strong>Yönetici Girişi</strong></div>
-        <div class="card-body">
-            <form asp-action="Login" method="post">
+
+@section Styles {
+    <!-- İsteğe bağlı: Rubik font (daha modern ve ince görünüm) -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: url('/thema/img/belediye.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Rubik', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        }
+
+        .login-wrap {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 520px; /* daha küçük kart */
+            border-radius: 16px;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,.12);
+        }
+
+        .login-header {
+            background: #ebeeef;
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+            .login-header img {
+                max-height: 70px
+            }
+
+        .login-title {
+            margin: 18px 0 12px 0;
+            text-align: center;
+            color: #145374;
+            font-weight: 500; /* kalın değil */
+            font-size: 1.25rem;
+            letter-spacing: .2px;
+        }
+
+        label.form-label {
+            font-weight: 400; /* kalın görünmesin */
+            color: #343a40;
+            margin-bottom: .35rem;
+        }
+
+        .form-control-user {
+            border-radius: 28px;
+            background: #f1f5f9;
+            border: 1px solid #d7dde3;
+            padding: 12px 16px;
+        }
+
+            .form-control-user:focus {
+                background: #f7fafc;
+                border-color: #94b8c9;
+                box-shadow: 0 0 0 .2rem rgba(15,76,117,.12);
+            }
+
+        .btn-login {
+            border-radius: 28px;
+            background: #0f4c75;
+            border: 0;
+            color: #fff; /* buton yazısı beyaz */
+            font-weight: 500; /* ağır durmasın */
+            padding: 12px 18px;
+            transition: transform .15s ease, background .2s ease;
+        }
+
+            .btn-login:hover {
+                background: #145374;
+                transform: translateY(-1px)
+            }
+
+            .btn-login:active {
+                transform: translateY(0)
+            }
+
+        .text-danger.small {
+            margin-top: .25rem;
+            display: block
+        }
+    </style>
+}
+
+<div class="login-wrap">
+    <div class="login-card">
+        <div class="login-header">
+            <img src="/thema/img/logo.png" alt="Battalgazi Belediyesi">
+        </div>
+
+        <div class="p-4 p-md-4">
+            <div class="login-title">YÖNETİCİ GİRİŞİ</div>
+
+            <form asp-action="Login" method="post" novalidate>
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="returnUrl" value="@returnUrl" />
 
                 <div class="mb-3">
-                    <label asp-for="NationalId" class="form-label"></label>
-                    <input asp-for="NationalId" class="form-control" inputmode="numeric" maxlength="11" autocomplete="off" />
-                    <span asp-validation-for="NationalId" class="text-danger"></span>
+                    <label asp-for="NationalId" class="form-label">T.C. Kimlik Numaranızı giriniz:</label>
+                    <input asp-for="NationalId"
+                           class="form-control form-control-user"
+                           placeholder="T.C. Kimlik No"
+                           inputmode="numeric" maxlength="11" autocomplete="off" />
+                    <span asp-validation-for="NationalId" class="text-danger small"></span>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input asp-for="Password" class="form-control" autocomplete="current-password" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
+                <div class="mb-4">
+                    <label asp-for="Password" class="form-label">Şifrenizi giriniz:</label>
+                    <input asp-for="Password"
+                           class="form-control form-control-user"
+                           placeholder="Şifre"
+                           autocomplete="current-password" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+                <button type="submit" class="btn btn-login w-100">Giriş Yap</button>
             </form>
         </div>
     </div>
@@ -33,7 +136,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // TCKN sadece rakam
+        // TCKN: sadece rakam ve 11 hane
         document.addEventListener("input", function(e){
             if (e.target.name === "NationalId") {
                 e.target.value = (e.target.value || "").replace(/\D+/g,"").slice(0,11);
