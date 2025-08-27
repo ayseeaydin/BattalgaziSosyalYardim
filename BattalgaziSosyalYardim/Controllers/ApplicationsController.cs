@@ -3,7 +3,7 @@ using BattalgaziSosyalYardim.Entities;
 using BattalgaziSosyalYardim.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Npgsql; // <-- eklendi
+using Npgsql;
 
 namespace BattalgaziSosyalYardim.Controllers
 {
@@ -28,8 +28,6 @@ namespace BattalgaziSosyalYardim.Controllers
             {
                 ProgramCode = string.IsNullOrWhiteSpace(programCode) ? "bez-destegi" : programCode,
                 ProgramTitle = "0-2 YAŞ BEBEK BEZİ DESTEĞİ BAŞVURU FORMU",
-                // İstersen boş bırakabilirsin; uyarı istemiyorsan setli kalabilir:
-                // MotherBirthDate = DateTime.Today
             };
 
             return View(model);
@@ -120,17 +118,14 @@ namespace BattalgaziSosyalYardim.Controllers
                     }
                     else
                     {
-                        // Diğer Postgres hataları
                         ModelState.AddModelError(string.Empty, "Başvurunuz kaydedilirken beklenmeyen bir veritabanı hatası oluştu.");
                     }
                 }
                 else
                 {
-                    // Sağlayıcı dışı bir DbUpdateException ise
                     ModelState.AddModelError(string.Empty, "Başvurunuz kaydedilemedi.");
                 }
 
-                // DEV ortamında ayrıntıyı da kullanıcıya göster (sadece debug amaçlı)
                 if (_env.IsDevelopment())
                 {
                     ModelState.AddModelError(string.Empty, $"[DEBUG] {ex.GetType().Name}: {ex.InnerException?.Message ?? ex.Message}");
