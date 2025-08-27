@@ -18,51 +18,75 @@ namespace BattalgaziSosyalYardim.Controllers
             _logger = logger;
         }
 
-        // GET: /Admin
-        // NOT: Index view'iniz IEnumerable<Application> bekliyorsa model olarak liste gönderiyoruz.
+        // GET: /Admin  -> Liste sayfası
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            // üstte kutucuklar için sayılar (kullanıyorsanız)
-            ViewBag.Pending = await _db.Applications.CountAsync(a => a.Status == ApplicationStatus.Pending);
-            ViewBag.Approved = await _db.Applications.CountAsync(a => a.Status == ApplicationStatus.Approved);
-            ViewBag.Rejected = await _db.Applications.CountAsync(a => a.Status == ApplicationStatus.Rejected);
-
-            // liste (DataTables vb. için)
             var apps = await _db.Applications
                 .AsNoTracking()
                 .OrderByDescending(a => a.Id)
                 .ToListAsync();
 
-            return View(apps); // <-- NULL REFERANS HATASINI ÇÖZER
+            return View(apps);
         }
 
-        // GET: /Admin/Applications?status=pending|approved|rejected
-        // İsterseniz /Admin/Applications sayfasında da filtreli liste gösterebilirsiniz.
-        [HttpGet]
-        public async Task<IActionResult> Applications(string? status = null)
+        // POST: /Admin/Approve  (Modal'dan gelir - açıklama Notes'a kaydedilir)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Approve(long id, string? reason)
         {
-            var q = _db.Applications
-                .AsNoTracking()
-                .OrderByDescending(a => a.Id)
-                .AsQueryable();
-
-            string st = "all";
-            if (!string.IsNullOrWhiteSpace(status))
+            var app = await _db.Applications.FirstOrDefaultAsync(a => a.Id == id);
+            if (app == null)
             {
-                st = status.ToLowerInvariant();
-                q = st switch
-                {
-                    "approved" => q.Where(a => a.Status == ApplicationStatus.Approved),
-                    "rejected" => q.Where(a => a.Status == ApplicationStatus.Rejected),
-                    "pending" => q.Where(a => a.Status == ApplicationStatus.Pending),
-                    _ => q
-                };
+                TempData["err"] = "Başvuru bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+            if (app.Status != ApplicationStatus.Pending)
+            {
+                TempData["err"] = "Bu başvuru için karar zaten verilmiş.";
+                return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Status = st;
-            var list = await q.ToListAsync();
-            return View(list);
+            app.Status = ApplicationStatus.Approved;
+            app.Notes = (reason ?? string.Empty).Trim();
+            app.RejectionReason = null;
+            app.DecisionUserId = User.Identity?.Name ?? "admin";
+            app.DecisionDate = DateTime.UtcNow;
+            app.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+            TempData["ok"] = "Başvuru onaylandı.";
+            _logger.LogInformation("Application {Id} approved by {User}", id, app.DecisionUserId);
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: /Admin/Reject  (Modal yok, direkt işlem)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reject(long id)
+        {
+            var app = await _db.Applications.FirstOrDefaultAsync(a => a.Id == id);
+            if (app == null)
+            {
+                TempData["err"] = "Başvuru bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+            if (app.Status != ApplicationStatus.Pending)
+            {
+                TempData["err"] = "Bu başvuru için karar zaten verilmiş.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            app.Status = ApplicationStatus.Rejected;
+            // Açıklama modal olmadığı için gerekirse Notes boş kalır
+            app.DecisionUserId = User.Identity?.Name ?? "admin";
+            app.DecisionDate = DateTime.UtcNow;
+            app.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+            TempData["ok"] = "Başvuru reddedildi.";
+            _logger.LogInformation("Application {Id} rejected by {User}", id, app.DecisionUserId);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
