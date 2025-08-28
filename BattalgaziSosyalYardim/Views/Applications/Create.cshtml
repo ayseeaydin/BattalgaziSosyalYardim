@@ -1,17 +1,46 @@
 ﻿@model BattalgaziSosyalYardim.Models.ApplicationCreateViewModel
 
 @{
-    // Bu satırlar sorun çıkarıyorsa geçici olarak kaldırabilirsin,
-    // ama normalde bu layout ile çalışıyoruz.
     Layout = "~/Views/Shared/_Bootstrap5Layout.cshtml";
     ViewData["Title"] = "Başvuru Formu";
 }
 
 @section Styles {
     <style>
+        /* === İki kartın aynı yükseklik olması için === */
+        .equal-row {
+            align-items: stretch;
+        }
+
+            .equal-row > [class^="col-"],
+            .equal-row > [class*=" col-"] {
+                display: flex;
+            }
+
+        .form-section, .info-card {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Mobilde doğal akış */
+        @@media (max-width: 991.98px) {
+            .equal-row > [class^="col-"],
+            .equal-row > [class*=" col-"] {
+                display: block;
+            }
+
+            .form-section, .info-card {
+                height: auto;
+            }
+
+            .info-card {
+                margin-top: 18px;
+            }
+        }
+
         body {
             background: url('/thema/img/belediye.jpg') no-repeat center center fixed;
-            background-size: cover
+            background-size: cover;
         }
 
         .background-overlay {
@@ -20,13 +49,14 @@
             width: 100%;
             height: 100%;
             filter: brightness(.7);
-            z-index: -1
+            z-index: -1;
         }
 
         .custom-card {
-            background-color: rgba(255,255,255,.95);
+            background-color: rgba(255,255,255,.50);
             border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,.2)
+            box-shadow: 0 0 20px rgba(0,0,0,.2);
+            overflow: hidden;
         }
 
         .form-header {
@@ -34,11 +64,12 @@
             align-items: center;
             justify-content: space-between;
             padding: 20px;
-            border-bottom: 1px solid #ddd
+            border-bottom: 1px solid #ddd;
+            background: #EBEEEF;
         }
 
             .form-header img {
-                height: 60px
+                height: 60px;
             }
 
             .form-header h2 {
@@ -46,28 +77,117 @@
                 text-align: center;
                 margin: 0;
                 font-size: 1.5rem;
-                font-weight: bold;
-                color: #333
+                font-weight: 700;
+                color: #145374;
             }
 
+        /* Sağ altta yuvarlak, saydam FAB */
         .admin-login {
             position: fixed;
-            top: 15px;
-            right: 15px;
+            right: 16px;
+            bottom: 16px;
             z-index: 1000;
-            background-color: azure;
-            color: #000
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: rgba(255,255,255,.55);
+            color: #0f4c75;
+            border: 1px solid rgba(255,255,255,.65);
+            box-shadow: 0 8px 22px rgba(0,0,0,.25);
+            backdrop-filter: blur(6px);
+            text-decoration: none;
+            font-size: 22px;
+            line-height: 1;
+        }
+
+            .admin-login:hover {
+                background: rgba(255,255,255,.75);
+                transform: translateY(-1px);
+                transition: all .15s ease;
+            }
+
+            .admin-login:focus {
+                outline: 0;
+                box-shadow: 0 0 0 3px rgba(16,112,202,.25), 0 8px 22px rgba(0,0,0,.25);
+            }
+        /* Erişilebilir gizli etiket */
+        .visually-hidden {
+            position: absolute !important;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         .req::after {
             content: " *";
             color: #d00;
-            font-weight: 700
+            font-weight: 700;
+        }
+
+        /* Sağ bilgi kartı */
+        .info-card {
+            background: #f7fbff;
+            border: 1px solid rgba(0,0,0,.06);
+            border-radius: 16px;
+            box-shadow: 0 8px 18px rgba(0,0,0,.06);
+            padding: 16px;
+        }
+
+            .info-card h5 {
+                font-weight: 700;
+                color: #124f7c;
+                margin-bottom: 10px;
+            }
+
+        .info-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0 14px;
+        }
+
+        .info-pill {
+            background: #e6f4ff;
+            border: 1px solid #cbe7ff;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: .92rem;
+            color: #0f4c75;
+            text-align: center;
+        }
+
+        .info-card ul {
+            margin: 0 0 10px 1.2rem;
+        }
+
+        .info-note {
+            color: #b00020;
+            font-weight: 700;
+            text-align: center;
+            font-size: 1.05rem;
+            margin-top: 10px;
+        }
+
+        /* Form alanları */
+        .form-section {
+            background: #fff;
+            border-radius: 12px;
         }
     </style>
 }
 
-<a href="/Login/Login" class="btn btn-outline-light admin-login" title="Yönetici Girişi">👤 Yönetici Girişi</a>
+<a href="/Login/Login" class="admin-login" title="Yönetici Girişi" aria-label="Yönetici Girişi">
+    👤
+    <span class="visually-hidden">Yönetici Girişi</span>
+</a>
+
 <div class="background-overlay"></div>
 
 <div class="container mt-5 mb-5">
@@ -79,9 +199,7 @@
         </div>
 
         <div class="card-body p-4">
-
-            @* Sunucu tarafı doğrulama özetini, alan adlarını Türkçe etiketlerle göster
-               (GLOBAL HATALAR DAHİL) *@
+            @* Hata özetini alan etiketleriyle gösterelim *@
             @{
                 var labels = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
@@ -92,15 +210,13 @@
                     [nameof(Model.BabyNationalId)] = "Bebek T.C. Kimlik No"
                 };
 
-                // Değişiklik: global (boş key) hataları da dahil ettik
                 var allErrors = ViewData.ModelState
                 .Where(kv => kv.Value?.Errors?.Count > 0)
                 .SelectMany(kv => kv.Value!.Errors.Select(e => new
                 {
                     Key = kv.Key,
-                    Label = string.IsNullOrEmpty(kv.Key)
-                ? "Form"
-                : (labels.ContainsKey(kv.Key) ? labels[kv.Key] : kv.Key),
+                    Label = string.IsNullOrEmpty(kv.Key) ? "Form" :
+                (labels.ContainsKey(kv.Key) ? labels[kv.Key] : kv.Key),
                     Message = e.ErrorMessage
                 }))
                 .ToList();
@@ -118,79 +234,117 @@
                 </div>
             }
 
-            <form asp-action="Create" asp-controller="Applications" method="post" novalidate>
-                @Html.AntiForgeryToken()
-                <input type="hidden" asp-for="ProgramCode" />
+            <div class="row g-3 equal-row">
+                <!-- SOL: BAŞVURU FORMU -->
+                <div class="col-lg-7">
+                    <div class="form-section p-2 p-md-3">
+                        <form asp-action="Create" asp-controller="Applications" method="post" novalidate>
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" asp-for="ProgramCode" />
 
-                <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherNationalId"></label>
-                    <div class="col-md-8">
-                        <input class="form-control"
-                               asp-for="MotherNationalId"
-                               autocomplete="off" inputmode="numeric" maxlength="11"
-                               aria-describedby="MotherNationalIdFeedback" />
-                        <span id="MotherNationalIdFeedback"
-                              class="invalid-feedback d-block text-danger"
-                              asp-validation-for="MotherNationalId"></span>
+                            <div class="mb-3 row">
+                                <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherNationalId"></label>
+                                <div class="col-md-8">
+                                    <input class="form-control"
+                                           asp-for="MotherNationalId"
+                                           autocomplete="off" inputmode="numeric" maxlength="11"
+                                           aria-describedby="MotherNationalIdFeedback" />
+                                    <span id="MotherNationalIdFeedback"
+                                          class="invalid-feedback d-block text-danger"
+                                          asp-validation-for="MotherNationalId"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherBirthDate"></label>
+                                <div class="col-md-8">
+                                    <input class="form-control"
+                                           asp-for="MotherBirthDate"
+                                           type="date"
+                                           aria-describedby="MotherBirthDateFeedback" />
+                                    <span id="MotherBirthDateFeedback"
+                                          class="invalid-feedback d-block text-danger"
+                                          asp-validation-for="MotherBirthDate"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherFullName"></label>
+                                <div class="col-md-8">
+                                    <input class="form-control"
+                                           asp-for="MotherFullName"
+                                           maxlength="100"
+                                           aria-describedby="MotherFullNameFeedback" />
+                                    <span id="MotherFullNameFeedback"
+                                          class="invalid-feedback d-block text-danger"
+                                          asp-validation-for="MotherFullName"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-md-4 col-form-label fw-semibold req" asp-for="PhoneNumber"></label>
+                                <div class="col-md-8">
+                                    <input class="form-control"
+                                           asp-for="PhoneNumber"
+                                           inputmode="tel" maxlength="11"
+                                           aria-describedby="PhoneNumberFeedback" />
+                                    <span id="PhoneNumberFeedback"
+                                          class="invalid-feedback d-block text-danger"
+                                          asp-validation-for="PhoneNumber"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-md-4 col-form-label fw-semibold req" asp-for="BabyNationalId"></label>
+                                <div class="col-md-8">
+                                    <input class="form-control"
+                                           asp-for="BabyNationalId"
+                                           autocomplete="off" inputmode="numeric" maxlength="11"
+                                           aria-describedby="BabyNationalIdFeedback" />
+                                    <span id="BabyNationalIdFeedback"
+                                          class="invalid-feedback d-block text-danger"
+                                          asp-validation-for="BabyNationalId"></span>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success">📤 Başvuru Yap</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
-                <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherBirthDate"></label>
-                    <div class="col-md-8">
-                        <input class="form-control"
-                               asp-for="MotherBirthDate"
-                               type="date"
-                               aria-describedby="MotherBirthDateFeedback" />
-                        <span id="MotherBirthDateFeedback"
-                              class="invalid-feedback d-block text-danger"
-                              asp-validation-for="MotherBirthDate"></span>
+                <!-- SAĞ: BİLGİLENDİRME -->
+                <div class="col-lg-5">
+                    <div class="info-card">
+                        <h5>Battalgazi Belediyesi Bebek Bezi Desteği</h5>
+
+                        <div class="info-meta">
+                            <div class="info-pill"><strong>Başlangıç:</strong> 01.06.2025</div>
+                            <div class="info-pill"><strong>Bitiş:</strong> 31.12.2025</div>
+                        </div>
+
+                        <ul>
+                            <li><strong>Müdürlük:</strong> SOSYAL YARDIM İŞLERİ ŞUBE MÜDÜRLÜĞÜ</li>
+                            <li><strong>Projenin amacı:</strong> 2025 “Aile yılı” kapsamında bebek bezi desteği</li>
+                        </ul>
+
+                        <hr />
+
+                        <ul>
+                            <li>TÜRKİYE CUMHURİYETİ vatandaşı olmak</li>
+                            <li>Battalgazi ilçe sınırlarında ikamet ediyor olması</li>
+                            <li>Bez desteği alacak çocukların 0–24 ay arasında olması</li>
+                            <li>Ailenin dar gelirli olması (iki asgari ücret altında)</li>
+                            <li>Sosyal uyum yardımı <u>almayan</u> aileler başvurabilir</li>
+                            <li>Eksik/sahte başvurular reddedilir</li>
+                            <li>Başvurular bebeğin annesi üzerinden online yapılır</li>
+                        </ul>
+
+                        <p class="info-note">NOT: Başvurular yalnızca online sistem üzerinden kabul edilmektedir.</p>
                     </div>
                 </div>
-
-                <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold req" asp-for="MotherFullName"></label>
-                    <div class="col-md-8">
-                        <input class="form-control"
-                               asp-for="MotherFullName"
-                               maxlength="100"
-                               aria-describedby="MotherFullNameFeedback" />
-                        <span id="MotherFullNameFeedback"
-                              class="invalid-feedback d-block text-danger"
-                              asp-validation-for="MotherFullName"></span>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold req" asp-for="PhoneNumber"></label>
-                    <div class="col-md-8">
-                        <input class="form-control"
-                               asp-for="PhoneNumber"
-                               inputmode="tel" maxlength="11"
-                               aria-describedby="PhoneNumberFeedback" />
-                        <span id="PhoneNumberFeedback"
-                              class="invalid-feedback d-block text-danger"
-                              asp-validation-for="PhoneNumber"></span>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label class="col-md-4 col-form-label fw-semibold req" asp-for="BabyNationalId"></label>
-                    <div class="col-md-8">
-                        <input class="form-control"
-                               asp-for="BabyNationalId"
-                               autocomplete="off" inputmode="numeric" maxlength="11"
-                               aria-describedby="BabyNationalIdFeedback" />
-                        <span id="BabyNationalIdFeedback"
-                              class="invalid-feedback d-block text-danger"
-                              asp-validation-for="BabyNationalId"></span>
-                    </div>
-                </div>
-
-                <div class="text-center">
-                    <button type="submit" class="btn btn-success">📤 Başvuru Yap</button>
-                </div>
-            </form>
+            </div>
         </div>
 
         <div class="card-footer text-center text-muted small">
@@ -199,47 +353,9 @@
     </div>
 </div>
 
-<!-- Açılışta bilgilendirme -->
-<div class="modal fade" id="basvuruModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Battalgazi Belediyesi Bebek Bezi Desteği</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
-            </div>
-            <div class="modal-body" style="white-space: pre-line;">
-                <strong>Müdürlük:</strong> SOSYAL YARDIM İŞLERİ ŞUBE MÜDÜRLÜĞÜ
-                <strong>Projenin amacı:</strong> 2025 “Aile yılı” kapsamında bebek bezi desteği
-                <strong>Proje başlangıcı:</strong> 01.06.2025
-                <strong>Proje bitimi:</strong> 31.12.2025
-                • TÜRKİYE CUMHURİYETİ vatandaşı olmak
-                • Battalgazi ilçe sınırlarında ikamet ediyor olması
-                • Bez desteği alacak çocukların 0 ile 24 ay arasında olması
-                • Ailenin dar gelirli olması (dar gelirli: iki asgari ücretin altında olması gerekmektedir.)
-                • Sosyal uyum yardımı alamayan aileler başvurabilir
-                • Eksik ve sahte olduğu tespit edilen başvurular kabul edilmeyecektir
-                • Başvurular bebeğin annesi üzerinden online olarak yapılacaktır
-
-                <p style="color:red;font-weight:bold;text-align:center;font-size:1.2rem;">
-                    NOT: BAŞVURULAR SADECE ONLINE SİSTEM ÜZERİNDEN KABUL EDİLMEKTEDİR.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tamam</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // Modal: her açılışta göster
-        document.addEventListener("DOMContentLoaded", function () {
-            const m = new bootstrap.Modal(document.getElementById('basvuruModal'), { backdrop: 'static' });
-            m.show();
-        });
-
         // Basit sayısal maskeleme
         function onlyDigits(v){ return (v||"").replace(/\D+/g,""); }
         document.addEventListener("input", function(e){
