@@ -21,37 +21,134 @@
 @section Styles {
     <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
     <style>
         body {
             background: url('/thema/img/belediye.jpg') no-repeat center center fixed;
             background-size: cover;
+            position: relative;
+        }
+
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                z-index: 0;
+                background: rgba(0,0,0,.25);
+            }
+
+        .page-wrap {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 48px 16px;
+            position: relative;
+            z-index: 1;
         }
 
         .list-shell {
+            width: 100%;
             max-width: 1200px;
-            margin: 60px auto;
-            background: rgba(255,255,255,.95);
-            border-radius: 16px;
-            box-shadow: 0 8px 40px rgba(0,0,0,.12);
-            padding: 24px;
+            background: rgba(255,255,255,.60);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,.45);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,.18);
+            overflow: hidden;
+        }
+
+        .list-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 22px 0 22px;
         }
 
         .list-title {
-            text-align: center;
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 16px;
+            margin: 0;
+            font-weight: 700;
+            color: #0b3c5d;
+            letter-spacing: .2px;
         }
 
-        .dt-buttons .btn {
-            border-radius: 6px;
+        .title-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        table.dataTable > thead > tr > th {
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .density-toggle {
+            border-radius: 999px;
+        }
+
+        .list-inner {
+            padding: 16px 16px 22px 16px;
+        }
+
+        /* Tablo */
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: rgba(255,255,255,.85) !important;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             white-space: nowrap;
         }
 
-        /* Durum hücresindeki açıklama metni */
+        .table-hover tbody tr:hover {
+            background-color: rgba(13,71,107,.05);
+        }
+
+        .table tbody tr:nth-child(odd) {
+            background-color: rgba(255,255,255,.55);
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: rgba(255,255,255,.80);
+        }
+
+        .chip {
+            display: inline-block;
+            padding: .25rem .5rem;
+            border-radius: 999px;
+            background: rgba(0,0,0,.06);
+        }
+
+        .badge-status {
+            font-weight: 600;
+            padding: .45rem .65rem;
+            border-radius: 999px;
+        }
+
+        .status-success {
+            background: #e6f4ea;
+            color: #1e7e34;
+            border: 1px solid #b7e2c1;
+        }
+
+        .status-warning {
+            background: #fff5e6;
+            color: #a86800;
+            border: 1px solid #f7d7a7;
+        }
+
+        .status-danger {
+            background: #fde8e7;
+            color: #b2251f;
+            border: 1px solid #f5b5b2;
+        }
+
         .decision-note {
             display: block;
             margin-top: .35rem;
@@ -61,90 +158,132 @@
             border: 1px solid #e9ecef;
             border-radius: .5rem;
             padding: .35rem .5rem;
-            white-space: normal; /* satır sarma */
-            max-width: 520px; /* çok uzun metinleri taşırmasın */
+            white-space: normal;
+            max-width: 520px;
+        }
+
+        /* >>> SADE BUTON STİLİ <<< */
+        .dt-buttons .dt-button,
+        #dt-buttons-left .dt-button,
+        #dt-buttons-slot .dt-button {
+            background-color: #fff !important;
+            border: 1px solid #ccc !important;
+            color: #000 !important;
+            padding: .35rem .75rem !important;
+            border-radius: 4px !important;
+            font-size: .875rem !important;
+            font-weight: 500 !important;
+            box-shadow: none !important;
+        }
+
+            .dt-buttons .dt-button:hover,
+            #dt-buttons-left .dt-button:hover,
+            #dt-buttons-slot .dt-button:hover {
+                background-color: #f0f0f0 !important;
+                border-color: #999 !important;
+                color: #000 !important;
+            }
+
+        @@media (max-width: 576px) {
+            .list-toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 }
 
-<div class="list-shell">
-    <div class="list-title">Başvuru Listesi</div>
+<div class="page-wrap">
+    <div class="list-shell">
+        <div class="list-toolbar">
+            <div class="title-stack">
+                <h2 class="list-title">Başvuru Listesi</h2>
+                <div id="dt-buttons-left"></div>
+            </div>
+            <div class="toolbar-right">
+                <div class="btn-group" role="group" aria-label="Yoğunluk">
+                    <button type="button" class="btn btn-outline-secondary btn-sm density-toggle" data-density="compact">
+                        Sıkı
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm density-toggle active" data-density="standard">
+                        Standart
+                    </button>
+                </div>
+                <div id="dt-buttons-slot"></div>
+            </div>
+        </div>
 
-    @if (TempData["ok"] is string ok && !string.IsNullOrWhiteSpace(ok))
-    {
-        <div class="alert alert-success">@ok</div>
-    }
-    @if (TempData["err"] is string err && !string.IsNullOrWhiteSpace(err))
-    {
-        <div class="alert alert-danger">@err</div>
-    }
+        <div class="list-inner">
+            @if (TempData["ok"] is string ok && !string.IsNullOrWhiteSpace(ok))
+            {
+                <div class="alert alert-success">@ok</div>
+            }
+            @if (TempData["err"] is string err && !string.IsNullOrWhiteSpace(err))
+            {
+                <div class="alert alert-danger">@err</div>
+            }
 
-    <div class="table-responsive">
-        <table id="appsTable" class="table table-striped table-bordered w-100">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Veli T.C.</th>
-                    <th>Veli Doğum Tarihi</th>
-                    <th>Veli Ad</th>
-                    <th>Veli Soyad</th>
-                    <th>Telefon</th>
-                    <th>Çocuk T.C.</th>
-                    <th>Durum / İşlem</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var a in Model)
-                {
-                    <tr>
-                        <td>@a.Id</td>
-                        <td>@a.MotherNationalId</td>
-                        <td>@a.MotherBirthDate.ToString("dd.MM.yyyy")</td>
-                        <td>@a.MotherFirstName</td>
-                        <td>@a.MotherLastName</td>
-                        <td>@a.PhoneNumber</td>
-                        <td>@a.BabyNationalId</td>
-                        <td class="text-nowrap">
-                            @if (a.Status == ApplicationStatus.Pending)
-                            {
-                                <!-- Onayla (modal açar) -->
-                                <button type="button"
-                                        class="btn btn-sm btn-success me-1 js-open-approve"
-                                        data-id="@a.Id">
-                                    Onayla
-                                </button>
+            <div class="table-responsive">
+                <table id="appsTable" class="table table-hover align-middle w-100">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Veli T.C.</th>
+                            <th>Veli Doğum Tarihi</th>
+                            <th>Veli Ad</th>
+                            <th>Veli Soyad</th>
+                            <th>Telefon</th>
+                            <th>Çocuk T.C.</th>
+                            <th>Durum / İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model)
+                        {
+                            <tr>
+                                <td>@a.Id</td>
+                                <td><span class="chip">@a.MotherNationalId</span></td>
+                                <td>@a.MotherBirthDate.ToString("dd.MM.yyyy")</td>
+                                <td>@a.MotherFirstName</td>
+                                <td>@a.MotherLastName</td>
+                                <td><span class="chip">@a.PhoneNumber</span></td>
+                                <td><span class="chip">@a.BabyNationalId</span></td>
+                                <td class="text-nowrap">
+                                    @if (a.Status == ApplicationStatus.Pending)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-success me-1 js-open-approve" data-id="@a.Id">Onayla</button>
+                                        <form asp-action="Reject" asp-controller="Admin" method="post" class="d-inline"
+                                              onsubmit="return confirm('Bu başvuruyu reddetmek istediğinize emin misiniz?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@a.Id" />
+                                            <button type="submit" class="btn btn-sm btn-danger">Reddet</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        var badgeClass = $"status-{StatusBadge(a.Status)}";
+                                        <span class="badge badge-status @badgeClass">@StatusText(a.Status)</span>
+                                        @if (a.Status == ApplicationStatus.Approved && !string.IsNullOrWhiteSpace(a.Notes))
+                                        {
+                                            <span class="decision-note">Not: @a.Notes</span>
+                                        }
+                                        else if (a.Status == ApplicationStatus.Rejected && !string.IsNullOrWhiteSpace(a.RejectionReason))
+                                        {
 
-                                <!-- Reddet (direkt post) -->
-                                <form asp-action="Reject" asp-controller="Admin" method="post" class="d-inline"
-                                      onsubmit="return confirm('Bu başvuruyu reddetmek istediğinize emin misiniz?');">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@a.Id" />
-                                    <button type="submit" class="btn btn-sm btn-danger">Reddet</button>
-                                </form>
-                            }
-                            else
-                            {
-                                <span class="badge bg-@StatusBadge(a.Status)">@StatusText(a.Status)</span>
-
-                                @* Açıklama gösterimi *@
-                                @if (a.Status == ApplicationStatus.Approved && !string.IsNullOrWhiteSpace(a.Notes))
-                                {
-                                    <span class="decision-note">Not: @a.Notes</span>
-                                }
-                                else if (a.Status == ApplicationStatus.Rejected && !string.IsNullOrWhiteSpace(a.RejectionReason))
-                                {
-                                    <span class="decision-note">Red Nedeni: @a.RejectionReason</span>
-                                }
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                                            <span class="decision-note">Red Nedeni: @a.RejectionReason</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- SADECE ONAY için modal -->
+<!-- Onay Modal -->
 <div class="modal fade" id="approveModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -157,8 +296,7 @@
                 </div>
                 <div class="modal-body">
                     <label class="form-label">Açıklama (isteğe bağlı)</label>
-                    <textarea class="form-control" name="reason" id="approveReason" rows="4"
-                              placeholder="İsterseniz not ekleyin. Notlar 'Notes' alanına kaydedilir."></textarea>
+                    <textarea class="form-control" name="reason" id="approveReason" rows="4"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Vazgeç</button>
@@ -170,6 +308,7 @@
 </div>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
@@ -179,27 +318,47 @@
 
     <script>
         $(function () {
-            $('#appsTable').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    { extend: 'copyHtml5', className: 'btn btn-secondary btn-sm', text: 'Copy' },
-                    { extend: 'csvHtml5',  className: 'btn btn-secondary btn-sm', text: 'CSV'  },
-                    { extend: 'print',     className: 'btn btn-secondary btn-sm', text: 'Print'}
-                ],
+            const dt = $('#appsTable').DataTable({
+                dom: "<'row'<'col-12'tr>>" +
+                     "<'row mt-2'<'col-md-5'i><'col-md-7 d-flex justify-content-end'p>>",
                 order: [[0, 'desc']],
                 pageLength: 10,
                 language: { url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/tr.json' }
             });
+
+            // Sol üst: Copy / CSV / Print
+            const leftBtns = new $.fn.dataTable.Buttons(dt, {
+                buttons: [
+                    { extend: 'copyHtml5', text: 'Copy' },
+                    { extend: 'csvHtml5',  text: 'CSV'  },
+                    { extend: 'print',     text: 'Print' }
+                ]
+            });
+            $(leftBtns.container()).appendTo('#dt-buttons-left');
+
+            // Sağ üst: Kolonlar
+            const rightBtns = new $.fn.dataTable.Buttons(dt, {
+                buttons: [
+                    { extend: 'colvis', text: 'Kolonlar' }
+                ]
+            });
+            $(rightBtns.container()).appendTo('#dt-buttons-slot');
+
+            $('.density-toggle').on('click', function(){
+                $('.density-toggle').removeClass('active');
+                $(this).addClass('active');
+                if ($(this).data('density') === 'compact')
+                    $('#appsTable').addClass('table-sm');
+                else
+                    $('#appsTable').removeClass('table-sm');
+            });
         });
 
-        // Onay modal'ı
         document.addEventListener('click', function (e) {
             const btn = e.target.closest('.js-open-approve');
             if (!btn) return;
-
             document.getElementById('approveId').value = btn.getAttribute('data-id');
             document.getElementById('approveReason').value = '';
-
             const modal = new bootstrap.Modal(document.getElementById('approveModal'));
             modal.show();
         });
