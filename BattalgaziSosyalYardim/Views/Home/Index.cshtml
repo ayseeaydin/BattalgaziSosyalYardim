@@ -1,113 +1,237 @@
 ﻿@{
-    ViewData["Title"] = "Index";
+    Layout = "_Bootstrap5Layout";
+    ViewData["Title"] = "Yardım Türünü Seçin";
 }
 
 @section Styles {
-    <!-- Google Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: rgb(54, 179, 234);
-            background-size: cover;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --bg-url: url('/thema/img/belediye.jpg'); /* arka plan fotoğrafı */
+            --blue1: #43B6EA;
+            --blue2: #2AA6D9;
+            --title1: #1e6aa7; /* başlık degrade üst */
+            --title2: #124f7c; /* başlık degrade alt */
         }
 
-        .page-wrapper {
+        body {
+            min-height: 100vh;
+            background: linear-gradient(180deg, rgba(0,79,133,.10), rgba(0,79,133,.10)), var(--bg-url) center / cover no-repeat fixed;
+        }
+
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 18px;
+        }
+
+        /* Ana kart (cam görünümlü) */
+        .card-glass {
+            width: min(760px, 96vw);
+            background: rgba(255,255,255,.50);
+            border-radius: 18px;
+            box-shadow: 0 24px 60px rgba(0,0,0,.22);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,.65);
+            padding: 28px 26px 32px;
+            min-height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Logo alanı */
+        .logo-area {
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            padding: 6px 0;
         }
 
-        .kapsayici-kutu {
-            background-color: white;
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px 30px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            .logo-area img {
+                width: 210px;
+                height: auto;
+            }
+
+        /* Başlık (degrade mavi) */
+        .title {
+            font: 700 30px 'Rubik', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
             text-align: center;
-            max-width: 600px;
-            width: 100%;
+            margin: 8px 0 16px;
+            color: #1e6aa7; /* fallback */
+            background: linear-gradient(180deg, var(--title1), var(--title2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: .2px;
+            text-shadow: 0 2px 10px rgba(0,0,0,.08);
         }
 
-        .yardim-title {
-            font-size: 30px;
-            color: #211717;
-            text-shadow: 1px 1px 5px #000;
-            margin-bottom: 40px;
-        }
-
-        .yardim-cards-container {
+        /* Kutu düzeni: ikon + metin hizalı */
+        .tile {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            align-items: center;
+            gap: 16px;
+            border-radius: 14px;
+            padding: 16px 18px;
+            box-shadow: 0 14px 28px rgba(0,0,0,.12);
         }
 
-        .yardim-card {
-            background-color: rgb(54, 179, 234);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: #333;
-        }
+            .tile + .tile {
+                margin-top: 16px;
+            }
 
-            .yardim-card:hover {
-                transform: translateY(-4px);
-                background-color: #007bff;
+            .tile.primary {
+                background: linear-gradient(180deg, var(--blue1), var(--blue2));
                 color: #fff;
+                text-decoration: none;
             }
 
-            .yardim-card .material-icons {
-                font-size: 42px;
-                margin-bottom: 8px;
-                color: white;
-                transition: color 0.3s ease;
+                .tile.primary:hover {
+                    filter: brightness(1.02);
+                    transform: translateY(-1px);
+                    transition: all .15s ease;
+                }
+
+            .tile.disabled {
+                background: #EEF3F7;
+                color: #5f7283;
+                box-shadow: 0 10px 22px rgba(0,0,0,.08) inset, 0 12px 20px rgba(0,0,0,.06);
+                pointer-events: none;
             }
 
-            .yardim-card:hover .material-icons {
-                color: black;
+        /* Sol ikon kapsülü */
+        .icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: rgba(255,255,255,.95);
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+            flex: 0 0 52px;
+        }
+
+            .icon img {
+                width: 26px;
+                height: 26px;
+                display: block;
             }
 
-        /* Pasif kart */
-        .disabled-card {
-            pointer-events: none;
-            opacity: 0.6;
-            cursor: not-allowed;
+        /* Metin bloğu */
+        .tile-body {
+            display: grid;
+            gap: 6px;
+        }
+
+        .t-title {
+            font: 700 20px 'Rubik', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            line-height: 1.25;
+            margin: 0;
+        }
+
+        .muted {
+            opacity: .9;
+            font-weight: 600;
+        }
+
+        .bullets {
+            margin: 0;
+            padding-left: 1.1rem;
+            list-style: disc;
+            font: 400 15px 'Rubik', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        }
+
+            .bullets li {
+                margin: 2px 0;
+            }
+
+        .tile.disabled .bullets {
+            color: #8296a6;
+        }
+
+        /* Sağ ok: sadece aktifte görünsün */
+        .chev {
+            margin-left: auto;
+            opacity: .9;
+        }
+
+        .tile.disabled .chev {
+            display: none;
+        }
+
+        @@media (max-width: 480px) {
+            .icon
+
+        {
+            width: 48px;
+            height: 48px;
+            flex-basis: 48px;
+        }
+
+        .icon img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .t-title {
+            font-size: 18px;
+        }
+
+        .bullets {
+            font-size: 14px;
+        }
+
         }
     </style>
 }
 
-<div class="page-wrapper">
-    <div class="kapsayici-kutu">
-        <!-- LOGO (wwwroot/img/battalgazi-logo.png) -->
-        <img src="~/thema/img/logo.png" alt="Logo"
-             style="width: 250px; display: block; margin: 0 auto 20px auto;" />
+<div class="wrap">
+    <div class="card-glass">
+        <!-- Logo -->
+        <div class="logo-area">
+            <img src="/thema/img/logo.png" alt="Battalgazi Belediyesi Logosu">
+        </div>
 
-        <hr style="border: 0; border-top: 2px solid rgb(54, 179, 234); margin: 0 0 30px 0;" />
+        <div class="title">Yardım Türünü Seçin</div>
 
-        <div class="yardim-title">Yardım Türünü Seçin</div>
+        <!-- Bez Desteği (AKTİF) -->
+        <a class="tile primary"
+           href="@Url.Action("Create", "Applications", new { programCode = "bez-destegi" })"
+           aria-label="Bez Desteği başvuru formu">
+            <div class="icon" aria-hidden="true">
+                <!-- PNG ikon -->
+                <img src="@Url.Content("~/thema/icons/pediatrics.png?v=1")" alt="Bebek bezi ikonu" />
+            </div>
 
-        <div class="yardim-cards-container">
-            <!-- Bez Desteği: Applications/Create?programCode=bez-destegi -->
-            <a class="yardim-card"
-               href="@Url.Action("Create", "Applications", new { programCode = "bez-destegi" })">
-                <span class="material-icons">baby_changing_station</span>
-                <div><strong>Bez Desteği</strong></div>
-            </a>
+            <div class="tile-body">
+                <div class="t-title">Bez Desteği</div>
+                <ul class="bullets">
+                    <li>0–24 ay arası bebekler</li>
+                    <li>Aylık bez yardımı</li>
+                </ul>
+            </div>
 
-            <!-- Pasif kart (yakında) -->
-            <a class="yardim-card disabled-card" title="Yakında">
-                <span class="material-icons">edit</span>
-                <div><strong>Kırtasiye Yardımı (Yakında)</strong></div>
-            </a>
+            <!-- sağ ok -->
+            <svg class="chev" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </a>
+
+        <!-- Kırtasiye (PASİF) -->
+        <div class="tile disabled" role="button" aria-disabled="true" tabindex="-1">
+            <div class="icon" aria-hidden="true">
+                <!-- basit kalem SVG -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M3 17.25V21h3.75L18.81 8.94l-3.75-3.75L3 17.25Z" fill="#DDE6EE" stroke="#9FB2C3" />
+                    <path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z" fill="#C9D6E2" />
+                </svg>
+            </div>
+            <div class="tile-body">
+                <div class="t-title">Kırtasiye Yardımı <span class="muted">(Yakında)</span></div>
+            </div>
+            <!-- pasifte ok yok -->
         </div>
     </div>
 </div>
