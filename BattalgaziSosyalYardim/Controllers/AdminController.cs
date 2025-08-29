@@ -18,7 +18,6 @@ namespace BattalgaziSosyalYardim.Controllers
             _logger = logger;
         }
 
-        // GET: /Admin  -> Liste sayfası
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -30,7 +29,6 @@ namespace BattalgaziSosyalYardim.Controllers
             return View(apps);
         }
 
-        // POST: /Admin/Approve  (Modal'dan gelir - açıklama Notes'a kaydedilir)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(long id, string? reason)
@@ -60,7 +58,6 @@ namespace BattalgaziSosyalYardim.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: /Admin/Reject  (Modal yok, direkt işlem)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(long id)
@@ -78,7 +75,6 @@ namespace BattalgaziSosyalYardim.Controllers
             }
 
             app.Status = ApplicationStatus.Rejected;
-            // Açıklama modal olmadığı için gerekirse Notes boş kalır
             app.DecisionUserId = User.Identity?.Name ?? "admin";
             app.DecisionDate = DateTime.UtcNow;
             app.UpdatedAt = DateTime.UtcNow;

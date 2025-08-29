@@ -9,9 +9,6 @@ namespace BattalgaziSosyalYardim.Controllers
     {
         private readonly AppDbContext _db;
         public AidProgramController(AppDbContext db) => _db = db;
-
-        // GET: /AidProgram
-        // Amaç; seed edilen yardım programlarını listelemek
         public async Task<IActionResult> Index()
         {
             var items = await _db.AidPrograms

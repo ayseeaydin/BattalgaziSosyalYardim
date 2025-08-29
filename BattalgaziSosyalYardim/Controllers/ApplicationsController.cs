@@ -20,7 +20,6 @@ namespace BattalgaziSosyalYardim.Controllers
             _env = env;
         }
 
-        // GET: /Applications/Create?programCode=bez-destegi
         [HttpGet]
         public IActionResult Create(string? programCode)
         {
@@ -33,14 +32,12 @@ namespace BattalgaziSosyalYardim.Controllers
             return View(model);
         }
 
-        // POST: /Applications/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ApplicationCreateViewModel model)
         {
             model.ProgramCode ??= "bez-destegi";
 
-            // Program var mı?
             var program = await _db.AidPrograms
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Code == model.ProgramCode);
@@ -48,7 +45,6 @@ namespace BattalgaziSosyalYardim.Controllers
             if (program == null)
                 ModelState.AddModelError(string.Empty, "Başvuru programı bulunamadı.");
 
-            // Doğum tarihi temel kontrol (ileriye tarih verilmesin)
             if (model.MotherBirthDate.HasValue && model.MotherBirthDate.Value.Date > DateTime.Today)
                 ModelState.AddModelError(nameof(model.MotherBirthDate), "Anne Doğum Tarihi bugünden ileri olamaz.");
 
@@ -58,7 +54,6 @@ namespace BattalgaziSosyalYardim.Controllers
                 return View(model);
             }
 
-            // Anne ad/soyad parçalama
             var parts = (model.MotherFullName ?? string.Empty)
                         .Trim()
                         .Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -88,16 +83,13 @@ namespace BattalgaziSosyalYardim.Controllers
             {
                 _logger.LogError(ex, "Başvuru kaydı sırasında hata.");
 
-                // Sağlayıcı bazlı hata (PostgreSQL) ise ayrıştır
                 if (ex.InnerException is PostgresException pg)
                 {
-                    // UNIQUE ihlali: (AidProgramId, BabyNationalId)
                     if (pg.SqlState == PostgresErrorCodes.UniqueViolation)
                     {
                         ModelState.AddModelError(nameof(model.BabyNationalId),
                             "Bu bebek için bu programda daha önce başvuru yapılmış.");
                     }
-                    // CHECK ihlalleri (regex)
                     else if (pg.SqlState == PostgresErrorCodes.CheckViolation)
                     {
                         switch (pg.ConstraintName)
@@ -138,7 +130,6 @@ namespace BattalgaziSosyalYardim.Controllers
             return RedirectToAction(nameof(Success));
         }
 
-        // GET: /Applications/Success
         [HttpGet]
         public IActionResult Success()
         {

@@ -58,10 +58,9 @@ namespace BattalgaziSosyalYardim.Controllers
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 principal,
-                new AuthenticationProperties { IsPersistent = false } // Beni hatırla YOK
+                new AuthenticationProperties { IsPersistent = false } 
             );
 
-            // Son giriş tarihi
             var tracked = await _db.AdminUsers.FirstAsync(u => u.Id == user.Id);
             tracked.LastLoginAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
