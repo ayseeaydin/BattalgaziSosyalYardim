@@ -10,12 +10,8 @@ namespace BattalgaziSosyalYardim.Database
     {
         public static async Task RunAsync(AppDbContext db)
         {
-            Console.WriteLine(">>> SeedData başladı");
-
-            // Gerekirse migrate et
             await db.Database.MigrateAsync();
 
-            // Yardım programları
             if (!await db.AidPrograms.AnyAsync())
             {
                 db.AidPrograms.AddRange(
@@ -41,15 +37,14 @@ namespace BattalgaziSosyalYardim.Database
                 Console.WriteLine(">>> AidPrograms eklendi.");
             }
 
-            // Admin kullanıcı (geliştirme için varsayılan)
             if (!await db.AdminUsers.AnyAsync())
             {
                 var admin = new AdminUser
                 {
-                    NationalId = "11111111111",             // DEV: ilk girişte değiştirin
+                    NationalId = "11111111111",             
                     FirstName = "Sistem",
                     LastName = "Yöneticisi",
-                    PasswordHash = PasswordHasher.Hash("Admin!123"), // DEV: ilk girişte değiştirin
+                    PasswordHash = PasswordHasher.Hash("Admin!123"),
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 };
@@ -60,7 +55,6 @@ namespace BattalgaziSosyalYardim.Database
                 Console.WriteLine(">>> Default AdminUser eklendi. TCKN=11111111111 Şifre=Admin!123");
             }
 
-            Console.WriteLine(">>> SeedData bitti");
         }
     }
 }

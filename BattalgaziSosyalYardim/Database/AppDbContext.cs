@@ -15,22 +15,18 @@ namespace BattalgaziSosyalYardim.Database
         {
             base.OnModelCreating(modelBuilder);
 
-            // AidProgram
             modelBuilder.Entity<AidProgram>()
                 .HasIndex(p => p.Code)
                 .IsUnique();
 
-            // Application: enum int olarak kalsın
             modelBuilder.Entity<Application>()
                 .Property(a => a.Status)
                 .HasConversion<int>();
 
-            // Unique: aynı program + aynı bebek tekil olsun
             modelBuilder.Entity<Application>()
                 .HasIndex(a => new { a.AidProgramId, a.BabyNationalId })
                 .IsUnique();
 
-            // Kolon tipleri
             modelBuilder.Entity<Application>()
                 .Property(a => a.MotherNationalId)
                 .HasColumnType("char(11)");
@@ -43,18 +39,15 @@ namespace BattalgaziSosyalYardim.Database
                 .Property(a => a.MotherBirthDate)
                 .HasColumnType("date");
 
-            // Application: string uzunlukları (DB tarafında garanti altına alalım)
             modelBuilder.Entity<Application>()
                 .Property(a => a.MotherFirstName).HasMaxLength(50);
             modelBuilder.Entity<Application>()
                 .Property(a => a.MotherLastName).HasMaxLength(50);
 
-            // Application: sık kullanılan alanlara indeks
             modelBuilder.Entity<Application>().HasIndex(a => a.Status);
             modelBuilder.Entity<Application>().HasIndex(a => a.CreatedAt);
 
 
-            // check constraints
             modelBuilder.Entity<Application>()
                 .ToTable(tb =>
                 {
@@ -66,7 +59,6 @@ namespace BattalgaziSosyalYardim.Database
                         "\"PhoneNumber\" ~ '^(?:\\+?90)?0?5[0-9]{9}$'");
                 });
 
-            // AdminUser
             modelBuilder.Entity<AdminUser>()
                 .HasIndex(u => u.NationalId)
                 .IsUnique();
