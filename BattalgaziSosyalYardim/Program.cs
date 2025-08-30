@@ -25,7 +25,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.  Hata yakalama / güvenlik
+// Hata yakalama / güvenlik
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -35,7 +35,7 @@ if (!app.Environment.IsDevelopment())
 
 // Orta katmanlar
 app.UseHttpsRedirection();
-app.UseStaticFiles();   // wwwroot için gerekli
+app.UseStaticFiles();   // wwwroot 
 app.UseRouting();
 app.UseAuthentication();   
 app.UseAuthorization();
