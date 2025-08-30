@@ -8,11 +8,9 @@ namespace BattalgaziSosyalYardim.Entities
     {
         public long Id { get; set; }
         
-        // ilişkiler
         public int AidProgramId { get; set; }
         public AidProgram AidProgram { get; set; }= default!;
 
-        // kimlik numaraları string tutulacak (başında 0 olabilme ihtimali, regex ile doğrulama vb.)
         [Required, StringLength(11, MinimumLength =11)]
         [RegularExpression(@"^[1-9][0-9]{10}$", ErrorMessage ="Anne TC kimlik numarası 11 haneli olmalıdır.")]
         public string MotherNationalId { get; set; } = default!;

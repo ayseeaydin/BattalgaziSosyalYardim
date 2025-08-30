@@ -10,7 +10,7 @@ namespace BattalgaziSosyalYardim.Entities
         [Required, StringLength(11, MinimumLength = 11)]
         [RegularExpression(@"^[1-9][0-9]{10}$", ErrorMessage = "T.C. Kimlik No 11 haneli olmalıdır.")]
         [Column(TypeName = "varchar(11)")]
-        public string NationalId { get; set; } = default!; // TCKN
+        public string NationalId { get; set; } = default!; 
 
         [Required, StringLength(50)]
         public string FirstName { get; set; } = default!;
